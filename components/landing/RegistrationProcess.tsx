@@ -1,125 +1,267 @@
-import { FileText, CircleCheck as CheckCircle, GraduationCap, Rocket } from 'lucide-react';
+import { CheckCircle, Clock, Rocket, Zap } from 'lucide-react';
 
-export function RegistrationProcess() {
-  const steps = [
-    {
-      icon: FileText,
-      title: 'Paso 1: Formulario Online',
-      description: 'Completa un formulario simple con los datos de tu negocio',
-      time: '5 minutos',
-      details: [
-        'Nombre y tipo de negocio',
-        'Datos de contacto',
-        'Categoría y servicios',
-        'Fotos básicas'
-      ]
-    },
-    {
-      icon: CheckCircle,
-      title: 'Paso 2: Validación de Datos',
-      description: 'Revisamos y validamos toda tu información',
-      time: '24-48 horas',
-      details: [
-        'Verificación de datos',
-        'Validación de imágenes',
-        'Confirmación de servicios',
-        'Revisión de información'
-      ]
-    },
-    {
-      icon: GraduationCap,
-      title: 'Paso 3: Vista Previa de tu Sección',
-      description: 'Subimos tu información y te enviamos la URL para que veas cómo se visualiza',
-      time: '24-48 horas',
-      details: [
-        'Configuración de tu perfil',
-        'Subida de toda la información',
-        'Envío de URL de vista previa',
-        'Revisión y aprobación'
-      ]
-    },
-    {
-      icon: Rocket,
-      title: 'Paso 4: Pago y Activación',
-      description: 'Realizas el pago y tu negocio queda activo',
-      time: 'Inmediato',
-      details: [
-        'Confirmación de pago',
-        'Activación del perfil',
-        'Tu negocio visible online',
-        'Soporte continuo incluido'
-      ]
+interface RegistrationProcessProps {
+  businessType: string;
+}
+
+export function RegistrationProcess({ businessType }: RegistrationProcessProps) {
+  const getBusinessData = (type: string) => {
+    switch (type) {
+      case 'restaurantes':
+        return {
+          title: "Tu restaurante online en 3 pasos",
+          subtitle: "De la cocina al mundo digital",
+          icon: "🍽️",
+          steps: [
+            {
+              number: "1",
+              title: "Cuéntanos de tu restaurante",
+              description: "Menú, horarios, zona de delivery",
+              time: "5 min",
+              icon: <CheckCircle className="w-8 h-8 text-green-500" />
+            },
+            {
+              number: "2", 
+              title: "Creamos tu sitio web",
+              description: "Diseño profesional con tu marca",
+              time: "24-48h",
+              icon: <Clock className="w-8 h-8 text-blue-500" />
+            },
+            {
+              number: "3",
+              title: "¡Empieza a vender!",
+              description: "Recibe pedidos desde el primer día",
+              time: "Inmediato",
+              icon: <Rocket className="w-8 h-8 text-purple-500" />
+            }
+          ]
+        };
+      case 'lavanderias':
+        return {
+          title: "Tu lavandería online en 3 pasos",
+          subtitle: "Servicios de limpieza al alcance de todos",
+          icon: "🧺",
+          steps: [
+            {
+              number: "1",
+              title: "Define tus servicios",
+              description: "Tipos de lavado, precios, horarios",
+              time: "5 min",
+              icon: <CheckCircle className="w-8 h-8 text-green-500" />
+            },
+            {
+              number: "2",
+              title: "Creamos tu plataforma",
+              description: "Sistema de reservas y seguimiento",
+              time: "24-48h", 
+              icon: <Clock className="w-8 h-8 text-blue-500" />
+            },
+            {
+              number: "3",
+              title: "¡Recibe clientes!",
+              description: "Gestiona pedidos fácilmente",
+              time: "Inmediato",
+              icon: <Rocket className="w-8 h-8 text-purple-500" />
+            }
+          ]
+        };
+      case 'peluquerias':
+        return {
+          title: "Tu salón online en 3 pasos",
+          subtitle: "Belleza y estilo al alcance digital",
+          icon: "💇‍♀️",
+          steps: [
+            {
+              number: "1",
+              title: "Configura tus servicios",
+              description: "Cortes, tratamientos, precios",
+              time: "5 min",
+              icon: <CheckCircle className="w-8 h-8 text-green-500" />
+            },
+            {
+              number: "2",
+              title: "Tu sitio web profesional",
+              description: "Galería de trabajos y reservas online",
+              time: "24-48h",
+              icon: <Clock className="w-8 h-8 text-blue-500" />
+            },
+            {
+              number: "3",
+              title: "¡Agenda completa!",
+              description: "Clientes reservan 24/7",
+              time: "Inmediato",
+              icon: <Rocket className="w-8 h-8 text-purple-500" />
+            }
+          ]
+        };
+      case 'tiendas':
+        return {
+          title: "Tu tienda online en 3 pasos",
+          subtitle: "Vende más, llega a más clientes",
+          icon: "🏪",
+          steps: [
+            {
+              number: "1",
+              title: "Sube tus productos",
+              description: "Catálogo, precios, inventario",
+              time: "10 min",
+              icon: <CheckCircle className="w-8 h-8 text-green-500" />
+            },
+            {
+              number: "2",
+              title: "Tu tienda virtual",
+              description: "Diseño atractivo y funcional",
+              time: "24-48h",
+              icon: <Clock className="w-8 h-8 text-blue-500" />
+            },
+            {
+              number: "3",
+              title: "¡Vende online!",
+              description: "Pagos seguros y envíos fáciles",
+              time: "Inmediato",
+              icon: <Rocket className="w-8 h-8 text-purple-500" />
+            }
+          ]
+        };
+      case 'salud':
+        return {
+          title: "Tu consulta online en 3 pasos",
+          subtitle: "Salud y bienestar digital",
+          icon: "🏥",
+          steps: [
+            {
+              number: "1",
+              title: "Configura tu consulta",
+              description: "Especialidades, horarios, tarifas",
+              time: "5 min",
+              icon: <CheckCircle className="w-8 h-8 text-green-500" />
+            },
+            {
+              number: "2",
+              title: "Plataforma profesional",
+              description: "Citas online y gestión de pacientes",
+              time: "24-48h",
+              icon: <Clock className="w-8 h-8 text-blue-500" />
+            },
+            {
+              number: "3",
+              title: "¡Atiende más pacientes!",
+              description: "Reservas automáticas 24/7",
+              time: "Inmediato",
+              icon: <Rocket className="w-8 h-8 text-purple-500" />
+            }
+          ]
+        };
+      default:
+        return {
+          title: "Tu negocio online en 3 pasos",
+          subtitle: "Digitaliza tu empresa fácilmente",
+          icon: "💼",
+          steps: [
+            {
+              number: "1",
+              title: "Cuéntanos tu negocio",
+              description: "Servicios, productos, objetivos",
+              time: "5 min",
+              icon: <CheckCircle className="w-8 h-8 text-green-500" />
+            },
+            {
+              number: "2",
+              title: "Creamos tu presencia digital",
+              description: "Sitio web personalizado",
+              time: "24-48h",
+              icon: <Clock className="w-8 h-8 text-blue-500" />
+            },
+            {
+              number: "3",
+              title: "¡Crece digitalmente!",
+              description: "Más clientes, más ventas",
+              time: "Inmediato",
+              icon: <Rocket className="w-8 h-8 text-purple-500" />
+            }
+          ]
+        };
     }
-  ];
+  };
+
+  const businessData = getBusinessData(businessType);
 
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Proceso Simple de Registro
+          <div className="text-6xl mb-4">{businessData.icon}</div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+            {businessData.title}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            En menos de 72 horas tu negocio estará online y recibiendo clientes
+            {businessData.subtitle}
           </p>
         </div>
 
         <div className="max-w-5xl mx-auto">
-          <div className="relative">
-            <div className="hidden md:block absolute top-24 left-0 right-0 h-1 bg-[#ff7200] opacity-20"></div>
-
-            <div className="grid md:grid-cols-4 gap-8">
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <div key={index} className="relative">
-                    <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-                      <div className="flex flex-col items-center text-center mb-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#ff7200] to-[#ff8c2e] rounded-full flex items-center justify-center mb-4 relative z-10 shadow-lg">
-                          <Icon className="w-8 h-8 text-white" />
-                        </div>
-                        <div className="inline-flex items-center gap-2 bg-[#ff7200] bg-opacity-10 text-[#ff7200] px-3 py-1 rounded-full text-xs font-semibold mb-3">
-                          {step.time}
-                        </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">
-                          {step.title}
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-4">
-                          {step.description}
-                        </p>
-                      </div>
-
-                      <ul className="space-y-2">
-                        {step.details.map((detail, dIndex) => (
-                          <li key={dIndex} className="text-xs text-gray-600 flex items-start gap-2">
-                            <span className="text-[#ff7200] mt-0.5">✓</span>
-                            <span>{detail}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {businessData.steps.map((step, index) => (
+              <div key={index} className="relative">
+                {/* Connector Line */}
+                {index < businessData.steps.length - 1 && (
+                  <div className="hidden md:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-orange-300 to-red-300 z-0" 
+                       style={{ width: 'calc(100% - 2rem)', left: '2rem' }} />
+                )}
+                
+                {/* Step Card */}
+                <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100 relative z-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                  {/* Step Number */}
+                  <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-6 mx-auto">
+                    {step.number}
                   </div>
-                );
-              })}
-            </div>
+
+                  {/* Icon */}
+                  <div className="flex justify-center mb-4">
+                    {step.icon}
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 text-center mb-4">
+                    {step.description}
+                  </p>
+
+                  {/* Time Badge */}
+                  <div className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 rounded-full px-4 py-2">
+                    <Zap className="w-4 h-4 text-orange-600" />
+                    <span className="text-sm font-semibold text-orange-700">{step.time}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div className="mt-12 bg-gradient-to-r from-[#ff7200] to-[#ff8c2e] rounded-2xl p-8 text-white text-center">
-            <h3 className="text-2xl font-bold mb-4">
-              ¿Listo para empezar?
-            </h3>
-            <p className="text-lg mb-6 opacity-90">
-              No necesitas conocimientos técnicos. Te guiamos en cada paso.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                ✓ Sin contrato de permanencia
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                ✓ Primer mes gratis
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                ✓ Soporte incluido
+          {/* CTA Section */}
+          <div className="text-center mt-16">
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl shadow-2xl p-8 text-white max-w-3xl mx-auto">
+              <h3 className="text-3xl font-bold mb-4">
+                ¡Empieza hoy mismo!
+              </h3>
+              <p className="text-xl mb-6 opacity-90">
+                Miles de negocios ya confían en nosotros
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <button 
+                  onClick={() => {
+                    const contactSection = document.getElementById('contact');
+                    contactSection?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="bg-white text-orange-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  Solicitar mi sitio web
+                </button>
+                <div className="flex items-center gap-2 text-sm opacity-90">
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Sin compromiso • Gratis por 7 días</span>
+                </div>
               </div>
             </div>
           </div>

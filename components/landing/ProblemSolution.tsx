@@ -1,114 +1,169 @@
-import { X, Check, TrendingDown, Users, Shield, Zap } from 'lucide-react';
+import { CheckCircle, XCircle, ArrowRight } from 'lucide-react';
 
-export function ProblemSolution() {
-  const problems = [
-    {
-      icon: TrendingDown,
-      text: 'Rappi/PedidosYa cobran 25-35% por cada venta',
-      detail: 'De cada S/100 que vendes, solo recibes S/70'
-    },
-    {
-      icon: Users,
-      text: 'Los clientes son de la app, no de tu negocio',
-      detail: 'No tienes acceso a datos ni contacto directo'
-    },
-    {
-      icon: Shield,
-      text: 'Competencia feroz entre miles de vendedores',
-      detail: 'Tu negocio se pierde entre cientos de opciones'
-    },
-    {
-      icon: Zap,
-      text: 'Sin control sobre tu presencia digital',
-      detail: 'Dependes completamente de sus reglas y algoritmos'
-    }
-  ];
+interface ProblemSolutionProps {
+  businessType?: string;
+}
 
-  const solutions = [
-    {
-      icon: Check,
-      text: 'Tarifa plana mensual - CERO comisiones por venta',
-      detail: 'De cada S/100 que vendes, todos los S/100 son tuyos'
-    },
-    {
-      icon: Check,
-      text: 'Clientes de TU barrio, clientes recurrentes',
-      detail: 'Base de datos completa con contactos directos'
-    },
-    {
-      icon: Check,
-      text: 'Destacas localmente, sin competencia masiva',
-      detail: 'Eres visible para tu comunidad específica'
-    },
-    {
-      icon: Check,
-      text: 'Control total de tu marca y productos',
-      detail: 'Tu web, tus reglas, tu crecimiento'
+// Contenido específico por tipo de negocio
+const businessContent = {
+  'restaurantes': {
+    problems: [
+      'Los clientes no encuentran tu menú actualizado',
+      'Pierdes pedidos por no tener delivery propio',
+      'Dependes de apps que cobran comisiones altas'
+    ],
+    solutions: [
+      'Menú digital siempre actualizado',
+      'Sistema de pedidos directo sin comisiones',
+      'WhatsApp integrado para atención rápida'
+    ]
+  },
+  'lavanderias': {
+    problems: [
+      'Los clientes no saben tus precios ni servicios',
+      'Pierdes tiempo coordinando recojo y entrega',
+      'No tienes forma de gestionar pedidos'
+    ],
+    solutions: [
+      'Lista clara de servicios y precios',
+      'Sistema de reservas para recojo/entrega',
+      'Seguimiento de pedidos en tiempo real'
+    ]
+  },
+  'peluquerias': {
+    problems: [
+      'Los clientes no pueden ver tu trabajo anterior',
+      'Pierdes citas por no tener sistema de reservas',
+      'Difícil mostrar todos tus servicios'
+    ],
+    solutions: [
+      'Galería de trabajos realizados',
+      'Sistema de citas online 24/7',
+      'Catálogo completo de servicios'
+    ]
+  },
+  'tiendas': {
+    problems: [
+      'Los clientes no conocen tus productos',
+      'Pierdes ventas por no tener catálogo online',
+      'Competencia con tiendas digitales'
+    ],
+    solutions: [
+      'Catálogo digital de productos',
+      'WhatsApp para consultas y pedidos',
+      'Presencia profesional online'
+    ]
+  },
+  'salud': {
+    problems: [
+      'Los pacientes no pueden agendar citas fácilmente',
+      'Pierdes tiempo en coordinación telefónica',
+      'Difícil mostrar tus especialidades'
+    ],
+    solutions: [
+      'Sistema de citas online',
+      'Información clara de especialidades',
+      'Contacto directo y profesional'
+    ]
+  }
+};
+
+export function ProblemSolution({ businessType = 'general' }: ProblemSolutionProps) {
+  // Obtener contenido específico o usar contenido general
+  const getContent = () => {
+    const key = businessType as keyof typeof businessContent;
+    if (businessContent[key]) {
+      return businessContent[key];
     }
-  ];
+    
+    // Contenido general por defecto
+    return {
+      problems: [
+        'Los clientes no te encuentran online',
+        'Pierdes ventas por falta de presencia digital',
+        'La competencia ya está en internet'
+      ],
+      solutions: [
+        'Presencia profesional en internet',
+        'Sistema para que te contacten fácilmente',
+        'Herramientas para gestionar tu negocio'
+      ]
+    };
+  };
+
+  const content = getContent();
 
   return (
-    <section className="py-20 bg-slate-900">
+    <section className="py-16 bg-gradient-to-b from-red-50 to-green-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-            ¿Por Qué Cambiar a <span className="text-[#ff7200]">Tubarrio.pe</span>?
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            ¿Te suena familiar?
           </h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Compara tu situación actual con la solución que te ofrecemos
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Estos son los problemas más comunes que enfrentan los negocios como el tuyo
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          <div className="bg-slate-800 rounded-2xl shadow-lg p-8 border-2 border-red-100">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <X className="w-6 h-6 text-red-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-white">Problema Actual</h3>
+        <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+          {/* Problemas */}
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-red-600 mb-4">
+                😰 Sin Tubarrio.pe
+              </h3>
+              <p className="text-gray-600">Los problemas que enfrentas día a día</p>
             </div>
-
-            <div className="space-y-6">
-              {problems.map((problem, index) => (
-                <div key={index} className="flex gap-4">
-                  <div className="flex-shrink-0">
-                    <problem.icon className="w-6 h-6 text-red-500" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-white mb-1">{problem.text}</p>
-                    <p className="text-sm text-gray-300">{problem.detail}</p>
-                  </div>
+            
+            <div className="space-y-4">
+              {content.problems.map((problem, index) => (
+                <div key={index} className="flex items-start gap-3 p-4 bg-red-50 rounded-lg border-l-4 border-red-400">
+                  <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-gray-800 font-medium">{problem}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-[#ff7200] rounded-2xl shadow-lg p-8 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
-
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <Check className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold">Nuestra Solución</h3>
-              </div>
-
-              <div className="space-y-6">
-                {solutions.map((solution, index) => (
-                  <div key={index} className="flex gap-4">
-                    <div className="flex-shrink-0">
-                      <solution.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-semibold mb-1">{solution.text}</p>
-                      <p className="text-sm text-white/80">{solution.detail}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* Soluciones */}
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-green-600 mb-4">
+                🚀 Con Tubarrio.pe
+              </h3>
+              <p className="text-gray-600">La solución que necesitas</p>
             </div>
+            
+            <div className="space-y-4">
+              {content.solutions.map((solution, index) => (
+                <div key={index} className="flex items-start gap-3 p-4 bg-green-50 rounded-lg border-l-4 border-green-400">
+                  <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-gray-800 font-medium">{solution}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-12">
+          <div className="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              ¿Listo para el cambio?
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Miles de negocios ya confiaron en nosotros para crecer digitalmente
+            </p>
+            <button 
+              onClick={() => {
+                const contactSection = document.getElementById('contact');
+                contactSection?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto"
+            >
+              Quiero mi página web
+              <ArrowRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>

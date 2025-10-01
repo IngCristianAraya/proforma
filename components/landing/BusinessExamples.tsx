@@ -1,452 +1,232 @@
-import { Shirt, UtensilsCrossed, Scissors, Store, ShoppingBag, Coffee, Wrench, Car, Home, Stethoscope, Heart, Utensils, Pizza, UserCheck, Calculator, Grid3X3, ExternalLink, ChevronDown } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { useState } from 'react';
+import { ExternalLink, Star, Clock, MapPin } from 'lucide-react';
 
 interface BusinessExamplesProps {
-  onCategoryChange?: (category: string) => void;
+  businessType: string;
 }
 
-export function BusinessExamples({ onCategoryChange }: BusinessExamplesProps) {
-  const [selectedCategory, setSelectedCategory] = useState('Todos');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    setIsDropdownOpen(false);
-    // Notificar al componente padre sobre el cambio
-    if (onCategoryChange) {
-      onCategoryChange(category);
+export function BusinessExamples({ businessType }: BusinessExamplesProps) {
+  const getBusinessExamples = (type: string) => {
+    switch (type) {
+      case 'restaurantes':
+        return [
+          {
+            name: "Pizzería Don Mario",
+            description: "Menú digital + pedidos WhatsApp",
+            image: "/examples/pizza.jpg",
+            rating: 4.8,
+            orders: "150+ pedidos/mes",
+            url: "https://tubarrio.pe/don-mario"
+          },
+          {
+            name: "Café Central",
+            description: "Reservas online + delivery",
+            image: "/examples/cafe.jpg",
+            rating: 4.9,
+            orders: "200+ reservas/mes",
+            url: "https://tubarrio.pe/cafe-central"
+          }
+        ];
+      case 'lavanderias':
+        return [
+          {
+            name: "Lavandería Express",
+            description: "Recojo y entrega a domicilio",
+            image: "/examples/lavanderia.jpg",
+            rating: 4.7,
+            orders: "80+ servicios/mes",
+            url: "https://tubarrio.pe/lavanderia-express"
+          },
+          {
+            name: "Clean & Fresh",
+            description: "Calculadora de precios online",
+            image: "/examples/clean.jpg",
+            rating: 4.8,
+            orders: "120+ clientes/mes",
+            url: "https://tubarrio.pe/clean-fresh"
+          }
+        ];
+      case 'peluquerias':
+        return [
+          {
+            name: "Salón Bella Vista",
+            description: "Citas online + galería trabajos",
+            image: "/examples/salon.jpg",
+            rating: 4.9,
+            orders: "300+ citas/mes",
+            url: "https://tubarrio.pe/bella-vista"
+          },
+          {
+            name: "Barbería Moderna",
+            description: "Reservas WhatsApp + promociones",
+            image: "/examples/barberia.jpg",
+            rating: 4.8,
+            orders: "250+ cortes/mes",
+            url: "https://tubarrio.pe/barberia-moderna"
+          }
+        ];
+      case 'tiendas':
+        return [
+          {
+            name: "Tienda Mi Barrio",
+            description: "Catálogo online + delivery",
+            image: "/examples/tienda.jpg",
+            rating: 4.6,
+            orders: "400+ productos vendidos",
+            url: "https://tubarrio.pe/mi-barrio"
+          },
+          {
+            name: "Farmacia San Juan",
+            description: "Pedidos WhatsApp + inventario",
+            image: "/examples/farmacia.jpg",
+            rating: 4.9,
+            orders: "500+ medicamentos/mes",
+            url: "https://tubarrio.pe/farmacia-san-juan"
+          }
+        ];
+      case 'salud':
+        return [
+          {
+            name: "Clínica Dental Sonrisa",
+            description: "Citas online + especialidades",
+            image: "/examples/dental.jpg",
+            rating: 4.9,
+            orders: "180+ consultas/mes",
+            url: "https://tubarrio.pe/clinica-sonrisa"
+          },
+          {
+            name: "Veterinaria Patitas",
+            description: "Emergencias 24h + telemedicina",
+            image: "/examples/veterinaria.jpg",
+            rating: 4.8,
+            orders: "220+ mascotas atendidas",
+            url: "https://tubarrio.pe/veterinaria-patitas"
+          }
+        ];
+      default:
+        return [
+          {
+            name: "Negocio Ejemplo 1",
+            description: "Solución personalizada",
+            image: "/examples/general1.jpg",
+            rating: 4.7,
+            orders: "100+ clientes/mes",
+            url: "https://tubarrio.pe/ejemplo1"
+          },
+          {
+            name: "Negocio Ejemplo 2",
+            description: "Presencia digital completa",
+            image: "/examples/general2.jpg",
+            rating: 4.8,
+            orders: "150+ servicios/mes",
+            url: "https://tubarrio.pe/ejemplo2"
+          }
+        ];
     }
   };
 
-  const categories = [
-    { id: 'Todos', name: 'Todos', icon: Grid3X3 },
-    { id: 'Lavanderías', name: 'Lavanderías', icon: Shirt },
-    { id: 'Peluquerías/Barberías', name: 'Peluquerías/Barberías', icon: Scissors },
-    { id: 'Tiendas/Abarrotes', name: 'Tiendas/Abarrotes', icon: Store },
-    { id: 'Veterinarias/Clínicas', name: 'Veterinarias/Clínicas', icon: Heart },
-    { id: 'Odontologías', name: 'Odontologías', icon: Stethoscope },
-    { id: 'Restaurantes', name: 'Restaurantes', icon: UtensilsCrossed },
-    { id: 'Comida Rápida', name: 'Comida Rápida', icon: Pizza },
-    { id: 'Servicios Generales', name: 'Servicios Generales', icon: Wrench },
-    { id: 'Servicios Profesionales', name: 'Servicios Profesionales', icon: UserCheck }
-  ];
-
-  const businessExamples = [
-    // Lavanderías
-    {
-      icon: Shirt,
-      name: 'Lavandería "Limpieza Express"',
-      category: 'Lavanderías',
-      needs: [
-        'LANDING PAGE (informativa) o PÁGINA WEB COMPLETA (con reservas)',
-        'Horarios de servicio visible',
-        'Precios por kg y tipos de lavado',
-        'Ubicación con mapa',
-        'Contacto directo por WhatsApp'
-      ],
-      solutions: [
-        'Perfil completo en TUBARRIO.PE',
-        'Hasta 5 fotos del local y servicios',
-        'Botón WhatsApp directo',
-        'Ubicación exacta en mapa',
-        'Horarios de atención actualizados',
-        'Rating y reseñas de clientes',
-        'LANDING PAGE como Saori.pe (S/150 pago único)',
-        'WEB CORPORATIVA como LaundryHeap (S/300 pago único)'
-      ],
-      color: 'bg-blue-600',
-      webExample: { name: 'Saori.pe', url: 'www.saori.pe', type: 'landing' }
-    },
-    
-    // Restaurantes
-    {
-      icon: UtensilsCrossed,
-      name: 'Restaurante "Sabor Criollo"',
-      category: 'Restaurantes',
-      needs: [
-        'LANDING PAGE (informativa) o WEB CORPORATIVA (con reservas)',
-        'Menú digital actualizado',
-        'Fotos atractivas de platos',
-        'Pedidos por delivery',
-        'Competir con Rappi/PedidosYa'
-      ],
-      solutions: [
-        'Listing destacado con banner (S/25/mes)',
-        'Galería de platos sin límite',
-        'Sin comisiones por venta',
-        'Contacto directo con clientes',
-        'Promociones propias',
-        'LANDING PAGE informativa (S/150 pago único)',
-        'WEB CORPORATIVA con pedidos online (S/300 pago único)'
-      ],
-      color: 'bg-red-600'
-    },
-
-    // Peluquerías/Barberías
-    {
-      icon: Scissors,
-      name: 'Barbería "Estilo Urbano"',
-      category: 'Peluquerías/Barberías',
-      needs: [
-        'LANDING PAGE (portfolio) o WEB CORPORATIVA (con reservas)',
-        'Servicios y lista de precios',
-        'Portfolio de trabajos',
-        'Reservas de citas',
-        'Ubicación exacta'
-      ],
-      solutions: [
-        'Perfil profesional completo',
-        'Galería de trabajos realizados',
-        'Información de servicios y precios',
-        'Botón WhatsApp para citas',
-        'Redes sociales integradas',
-        'LANDING PAGE con portfolio (S/150 pago único)',
-        'WEB CORPORATIVA con sistema de citas (S/300 pago único)'
-      ],
-      color: 'bg-purple-600'
-    },
-
-    // Tiendas/Abarrotes
-    {
-      icon: Store,
-      name: 'Bodega "El Ahorro"',
-      category: 'Tiendas/Abarrotes',
-      needs: [
-        'TIENDA VIRTUAL o LANDING PAGE (catálogo)',
-        'Catálogo de productos básicos',
-        'Pedidos por WhatsApp',
-        'Delivery local',
-        'Competir con apps de delivery'
-      ],
-      solutions: [
-        'Listing básico (S/15/mes)',
-        'Descripción de productos principales',
-        'Sin comisiones por pedido',
-        'Contacto directo con clientes',
-        'Horarios de delivery claros',
-        'LANDING PAGE con catálogo (S/150 pago único)',
-        'TIENDA VIRTUAL completa (S/500 pago único)'
-      ],
-      color: 'bg-green-600'
-    },
-
-    // Veterinarias/Clínicas
-    {
-      icon: Heart,
-      name: 'Veterinaria "Amigos Peludos"',
-      category: 'Veterinarias/Clínicas',
-      needs: [
-        'LANDING PAGE (informativa) o WEB CORPORATIVA (citas online)',
-        'Servicios veterinarios disponibles',
-        'Horarios de emergencia',
-        'Sistema de citas',
-        'Información de contacto'
-      ],
-      solutions: [
-        'Perfil profesional veterinario',
-        'Servicios y especialidades',
-        'Horarios de atención y emergencias',
-        'WhatsApp para citas urgentes',
-        'Ubicación con referencias',
-        'LANDING PAGE informativa (S/150 pago único)',
-        'WEB CORPORATIVA con sistema de citas (S/300 pago único)'
-      ],
-      color: 'bg-pink-600'
-    },
-
-    // Odontologías
-    {
-      icon: Stethoscope,
-      name: 'Consultorio Dental "Sonrisa Perfecta"',
-      category: 'Odontologías',
-      needs: [
-        'LANDING PAGE (informativa) o WEB CORPORATIVA (citas online)',
-        'Tratamientos dentales disponibles',
-        'Horarios de consulta',
-        'Sistema de citas',
-        'Información del consultorio'
-      ],
-      solutions: [
-        'Perfil profesional odontológico',
-        'Tratamientos y servicios dentales',
-        'Horarios de atención claros',
-        'WhatsApp para citas',
-        'Ubicación con referencias',
-        'LANDING PAGE informativa (S/150 pago único)',
-        'WEB CORPORATIVA con sistema de citas (S/300 pago único)'
-      ],
-      color: 'bg-teal-600'
-    },
-
-    // Comida Rápida
-    {
-      icon: Pizza,
-      name: 'Pollería "Dorado Crujiente"',
-      category: 'Comida Rápida',
-      needs: [
-        'LANDING PAGE (menú) o WEB CORPORATIVA (pedidos online)',
-        'Menú de comida rápida',
-        'Precios actualizados',
-        'Delivery rápido',
-        'Competir con apps de delivery'
-      ],
-      solutions: [
-        'Listing destacado con banner (S/25/mes)',
-        'Menú digital completo',
-        'Sin comisiones por pedido',
-        'Contacto directo para delivery',
-        'Promociones especiales',
-        'LANDING PAGE con menú (S/150 pago único)',
-        'WEB CORPORATIVA con pedidos online (S/300 pago único)'
-      ],
-      color: 'bg-orange-600'
-    },
-
-    // Servicios Generales
-    {
-      icon: Wrench,
-      name: 'Electricista "Servicios Rápidos"',
-      category: 'Servicios Generales',
-      needs: [
-        'LANDING PAGE (servicios) o WEB CORPORATIVA (citas)',
-        'Disponibilidad 24/7',
-        'Tipos de servicios',
-        'Zona de cobertura',
-        'Contacto inmediato'
-      ],
-      solutions: [
-        'Perfil destacado en directorio',
-        'Servicios detallados',
-        'Zona de cobertura visible',
-        'WhatsApp directo para emergencias',
-        'Rating de trabajos anteriores',
-        'LANDING PAGE con servicios (S/150 pago único)',
-        'WEB CORPORATIVA con sistema de citas (S/300 pago único)'
-      ],
-      color: 'bg-yellow-600'
-    },
-
-    {
-      icon: Car,
-      name: 'Taller "AutoFix"',
-      category: 'Servicios Generales',
-      needs: [
-        'LANDING PAGE (servicios) o WEB CORPORATIVA (citas online)',
-        'Servicios especializados',
-        'Precios transparentes',
-        'Ubicación del taller',
-        'Horarios de atención'
-      ],
-      solutions: [
-        'Listing completo con especialidades',
-        'Fotos del taller y trabajos',
-        'Lista de servicios y precios',
-        'Mapa con ubicación exacta',
-        'Contacto directo por WhatsApp',
-        'LANDING PAGE con servicios (S/150 pago único)',
-        'WEB CORPORATIVA con citas online (S/300 pago único)'
-      ],
-      color: 'bg-gray-600'
-    },
-
-    {
-      icon: Home,
-      name: 'Albañil "Construcciones Pérez"',
-      category: 'Servicios Generales',
-      needs: [
-        'LANDING PAGE (portfolio) o WEB CORPORATIVA (presupuestos)',
-        'Portfolio de trabajos',
-        'Tipos de construcción',
-        'Presupuestos rápidos',
-        'Referencias de clientes'
-      ],
-      solutions: [
-        'Galería de proyectos realizados',
-        'Servicios de construcción detallados',
-        'Contacto directo para presupuestos',
-        'Sistema de reseñas integrado',
-        'Zona de trabajo especificada',
-        'LANDING PAGE con portfolio (S/150 pago único)',
-        'WEB CORPORATIVA con sistema de presupuestos (S/300 pago único)'
-      ],
-      color: 'bg-orange-600'
-    },
-
-    // Servicios Profesionales
-    {
-      icon: UserCheck,
-      name: 'Psicólogo "Mente Sana"',
-      category: 'Servicios Profesionales',
-      needs: [
-        'LANDING PAGE (informativa) o WEB CORPORATIVA (citas online)',
-        'Especialidades psicológicas',
-        'Horarios de consulta',
-        'Sistema de citas confidencial',
-        'Información profesional'
-      ],
-      solutions: [
-        'Perfil profesional certificado',
-        'Especialidades y enfoques terapéuticos',
-        'Horarios de atención flexibles',
-        'WhatsApp para citas discretas',
-        'Ubicación del consultorio',
-        'LANDING PAGE informativa (S/150 pago único)',
-        'WEB CORPORATIVA con sistema de citas (S/300 pago único)'
-      ],
-      color: 'bg-indigo-600'
-    },
-
-    {
-      icon: Calculator,
-      name: 'Contador "Números Exactos"',
-      category: 'Servicios Profesionales',
-      needs: [
-        'LANDING PAGE (servicios) o WEB CORPORATIVA (gestión de clientes)',
-        'Servicios contables disponibles',
-        'Experiencia y certificaciones',
-        'Contacto profesional',
-        'Horarios de atención'
-      ],
-      solutions: [
-        'Perfil profesional contable',
-        'Servicios: declaraciones, libros, asesoría',
-        'Certificaciones y experiencia',
-        'WhatsApp para consultas',
-        'Horarios de oficina claros',
-        'LANDING PAGE con servicios (S/150 pago único)',
-        'WEB CORPORATIVA con gestión de clientes (S/300 pago único)'
-      ],
-      color: 'bg-slate-600'
-    }
-  ];
+  const examples = getBusinessExamples(businessType);
 
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Escoge tu Negocio y Mira las Posibilidades de Crecimiento
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            Casos de Éxito
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Descubre cómo negocios como el tuyo han transformado su presencia digital y aumentado sus ventas sin comisiones
+            Mira cómo otros negocios como el tuyo están creciendo con nosotros
           </p>
         </div>
 
-        {/* Category Dropdown Menu */}
-        <div className="flex justify-center mb-12">
-          <div className="relative">
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-3 px-6 py-3 bg-white border-2 border-blue-200 rounded-xl text-gray-700 font-medium hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 shadow-lg hover:shadow-xl min-w-[280px] justify-between"
-            >
-              <div className="flex items-center gap-3">
-                {(() => {
-                  const selectedCat = categories.find(cat => cat.id === selectedCategory);
-                  const IconComponent = selectedCat?.icon || Grid3X3;
-                  return (
-                    <>
-                      <IconComponent className="w-5 h-5 text-blue-600" />
-                      <span className="text-lg">{selectedCat?.name || 'Todos'}</span>
-                    </>
-                  );
-                })()}
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {examples.map((example, index) => (
+            <div key={index} className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+              {/* Image placeholder with gradient */}
+              <div className="h-48 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/20"></div>
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="flex items-center gap-2 text-white">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-semibold">{example.rating}</span>
+                    <span className="text-white/80">• {example.orders}</span>
+                  </div>
+                </div>
               </div>
-              <ChevronDown className={`w-5 h-5 text-blue-600 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
 
-            {/* Dropdown Menu */}
-            {isDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-80 overflow-y-auto">
-                {categories.map((category) => {
-                  const IconComponent = category.icon;
-                  return (
-                    <button
-                      key={category.id}
-                      onClick={() => handleCategoryChange(category.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-blue-50 transition-colors duration-150 first:rounded-t-xl last:rounded-b-xl ${
-                        selectedCategory === category.id ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700'
-                      }`}
-                    >
-                      <IconComponent className={`w-4 h-4 ${selectedCategory === category.id ? 'text-blue-600' : 'text-gray-500'}`} />
-                      {category.name}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Business Examples Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {businessExamples.filter(example => selectedCategory === 'Todos' || example.category === selectedCategory).map((example, index) => {
-            const Icon = example.icon;
-            return (
-              <Card key={index} className="overflow-hidden hover:shadow-xl transition-shadow border-0">
-                <div className={`${example.color} p-6 text-white shadow-lg`}>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm border border-white/20">
-                      <Icon className="w-6 h-6 text-white drop-shadow-sm" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-white uppercase tracking-wide drop-shadow-sm">{example.category}</div>
-                      <h3 className="text-lg font-bold text-white drop-shadow-md">{example.name}</h3>
-                    </div>
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{example.name}</h3>
+                    <p className="text-gray-600">{example.description}</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1 rounded-full text-sm font-semibold">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    Activo
                   </div>
                 </div>
 
-                <CardContent className="p-6">
-                  <div className="mb-4">
-                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">Necesitan:</h4>
-                    <ul className="space-y-1">
-                      {example.needs.map((need, nIndex) => (
-                        <li key={nIndex} className="text-sm text-gray-600 flex items-start gap-2">
-                          <span className="text-red-500 mt-1">•</span>
-                          <span>{need}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-[#ff7200] mb-2 text-sm">Nosotros ofrecemos:</h4>
-                    <ul className="space-y-1">
-                      {example.solutions.map((solution, sIndex) => (
-                        <li key={sIndex} className="text-sm text-gray-700 flex items-start gap-2">
-                          <span className="text-[#ff7200] mt-1">✓</span>
-                          <span>{solution}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Web Example Button */}
-                  {example.webExample && (
-                    <div className="mt-6 pt-4 border-t border-gray-200">
-                      <button
-                        onClick={() => window.open(`https://${example.webExample.url}`, '_blank')}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Ver ejemplo: {example.webExample.url}
-                      </button>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>24/7</span>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      <span>Lima</span>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => window.open(example.url, '_blank')}
+                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold transition-colors group-hover:translate-x-1 transition-transform"
+                  >
+                    Ver sitio
+                    <ExternalLink className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Show message when no examples found */}
-        {businessExamples.filter(example => selectedCategory === 'Todos' || example.category === selectedCategory).length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">
-              No hay ejemplos disponibles para esta categoría.
-            </p>
+        {/* Success Stats */}
+        <div className="mt-16 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">1000+</div>
+              <div className="text-gray-600 font-medium">Negocios activos</div>
+            </div>
+            <div>
+              <div className="text-3xl md:text-4xl font-bold text-green-600 mb-2">95%</div>
+              <div className="text-gray-600 font-medium">Satisfacción</div>
+            </div>
+            <div>
+              <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">5 días</div>
+              <div className="text-gray-600 font-medium">Tiempo promedio</div>
+            </div>
+            <div>
+              <div className="text-3xl md:text-4xl font-bold text-orange-600 mb-2">24/7</div>
+              <div className="text-gray-600 font-medium">Soporte</div>
+            </div>
           </div>
-        )}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-12">
+          <p className="text-lg text-gray-600 mb-6">
+            ¿Listo para ser el próximo caso de éxito?
+          </p>
+          <button 
+            onClick={() => {
+              const contactSection = document.getElementById('contact');
+              contactSection?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            Empezar mi proyecto
+          </button>
+        </div>
       </div>
     </section>
   );

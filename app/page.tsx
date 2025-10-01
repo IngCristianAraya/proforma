@@ -11,23 +11,37 @@ import { SavingsCalculator } from '@/components/landing/SavingsCalculator';
 import { RegistrationProcess } from '@/components/landing/RegistrationProcess';
 import { FAQ } from '@/components/landing/FAQ';
 import { ContactForm } from '@/components/landing/ContactForm';
+import { BusinessTypeSelector } from '@/components/landing/BusinessTypeSelector';
 import { Footer } from '@/components/landing/Footer';
 import { Toaster } from '@/components/ui/toaster';
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [selectedBusinessType, setSelectedBusinessType] = useState<string>('general');
 
   return (
     <main className="min-h-screen">
       <HeroSection />
-      <ProblemSolution />
-      <ComparisonTable />
-      <SavingsCalculator />
-      <PricingPlans />
-      <BusinessExamples onCategoryChange={setSelectedCategory} />
-      <WebComparison selectedCategory={selectedCategory} />
+      
+      {/* Selector de tipo de negocio */}
+      <BusinessTypeSelector 
+        onBusinessTypeSelect={setSelectedBusinessType}
+        selectedType={selectedBusinessType}
+      />
+      
+      {/* Contenido personalizado según el tipo de negocio */}
+      <ProblemSolution businessType={selectedBusinessType} />
+      
+      {/* Solo mostrar comparativa si es relevante */}
+      {(selectedBusinessType === 'restaurantes' || selectedBusinessType === 'tiendas') && (
+        <ComparisonTable businessType={selectedBusinessType} />
+      )}
+      
+      <WebComparison businessType={selectedBusinessType} />
+      <PricingPlans businessType={selectedBusinessType} />
+      <BusinessExamples selectedCategory={selectedBusinessType} />
+      <SavingsCalculator businessType={selectedBusinessType} />
       <RegistrationProcess />
-      <FAQ />
+      <FAQ businessType={selectedBusinessType} />
       <ContactForm />
       <Footer />
       <Toaster />

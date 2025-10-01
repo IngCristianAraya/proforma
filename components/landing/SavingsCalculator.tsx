@@ -1,170 +1,222 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Calculator, TrendingDown, TrendingUp } from 'lucide-react';
+import { Calculator, TrendingUp, DollarSign, Zap } from 'lucide-react';
 
-export function SavingsCalculator() {
-  const [monthlySales, setMonthlySales] = useState<number>(3000);
+interface SavingsCalculatorProps {
+  businessType: string;
+}
 
-  const rappiCommission = monthlySales * 0.30;
-  const pedidosYaCommission = monthlySales * 0.275;
-  const tubarrioMonthly = 99;
-  const monthlyRappiSavings = rappiCommission - tubarrioMonthly;
-  const yearlyRappiSavings = monthlyRappiSavings * 12;
-  const monthlyPedidosYaSavings = pedidosYaCommission - tubarrioMonthly;
-  const yearlyPedidosYaSavings = monthlyPedidosYaSavings * 12;
+export function SavingsCalculator({ businessType }: SavingsCalculatorProps) {
+  const [monthlyOrders, setMonthlyOrders] = useState(100);
+  const [averageOrderValue, setAverageOrderValue] = useState(25);
+
+  const getBusinessData = (type: string) => {
+    switch (type) {
+      case 'restaurantes':
+        return {
+          title: "Calculadora de Ahorro - Restaurantes",
+          subtitle: "Compara tus costos actuales vs Tubarrio.pe",
+          orderLabel: "Pedidos por mes",
+          valueLabel: "Valor promedio por pedido",
+          defaultOrders: 150,
+          defaultValue: 35,
+          commission: 0.18, // 18% comisión promedio delivery apps
+          icon: "🍽️"
+        };
+      case 'tiendas':
+        return {
+          title: "Calculadora de Ahorro - Tiendas",
+          subtitle: "Descubre cuánto puedes ahorrar",
+          orderLabel: "Ventas por mes",
+          valueLabel: "Ticket promedio",
+          defaultOrders: 200,
+          defaultValue: 20,
+          commission: 0.15,
+          icon: "🏪"
+        };
+      default:
+        return {
+          title: "Calculadora de Ahorro",
+          subtitle: "Calcula tu potencial de ahorro",
+          orderLabel: "Servicios por mes",
+          valueLabel: "Valor promedio",
+          defaultOrders: 100,
+          defaultValue: 25,
+          commission: 0.12,
+          icon: "💼"
+        };
+    }
+  };
+
+  const businessData = getBusinessData(businessType);
+  const monthlyRevenue = monthlyOrders * averageOrderValue;
+  const currentCommissions = monthlyRevenue * businessData.commission;
+  const tubarrioFee = businessType === 'restaurantes' || businessType === 'tiendas' ? 25 : 15;
+  const monthlySavings = currentCommissions - tubarrioFee;
+  const yearlySavings = monthlySavings * 12;
 
   return (
-    <section id="calculator" className="py-20 bg-white">
+    <section className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12 text-gray-800">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Calculadora de Ahorros
+        <div className="text-center mb-16">
+          <div className="text-6xl mb-4">{businessData.icon}</div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            {businessData.title}
           </h2>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto">
-            Descubre cuánto podrías ahorrar cambiándote a Tubarrio.pe
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            {businessData.subtitle}
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <Card className="shadow-2xl">
-            <CardHeader className="bg-gray-50 border-b">
-              <CardTitle className="flex items-center gap-2">
-                <Calculator className="w-6 h-6 text-blue-600" />
-                Simulador de Comisiones
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-8">
-              <div className="mb-8">
-                <Label htmlFor="sales" className="text-lg font-semibold mb-3 block">
-                  ¿Cuánto vendes mensualmente?
-                </Label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">
-                    S/
-                  </span>
-                  <Input
-                    id="sales"
-                    type="number"
-                    value={monthlySales}
-                    onChange={(e) => setMonthlySales(Number(e.target.value))}
-                    className="text-2xl font-bold pl-12 h-16 text-center"
-                    min={0}
-                    step={100}
-                  />
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Calculator Inputs */}
+            <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <Calculator className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-sm text-gray-500 mt-2 text-center">
-                  Ingresa tus ventas mensuales aproximadas
-                </p>
+                <h3 className="text-2xl font-bold text-gray-900">Ingresa tus datos</h3>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div className="bg-red-50 rounded-xl p-6 border-2 border-red-100">
-                  <div className="flex items-center gap-2 mb-4">
-                    <TrendingDown className="w-5 h-5 text-red-600" />
-                    <h3 className="font-bold text-gray-900">Con Rappi (30%)</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div>
-                      <div className="text-sm text-gray-600">Comisión mensual</div>
-                      <div className="text-2xl font-bold text-red-600">
-                        S/ {rappiCommission.toFixed(2)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-600">Recibes</div>
-                      <div className="text-xl font-semibold text-gray-900">
-                        S/ {(monthlySales - rappiCommission).toFixed(2)}
-                      </div>
+              <div className="space-y-8">
+                <div>
+                  <label className="block text-lg font-semibold text-gray-700 mb-4">
+                    {businessData.orderLabel}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="range"
+                      min="10"
+                      max="1000"
+                      value={monthlyOrders}
+                      onChange={(e) => setMonthlyOrders(Number(e.target.value))}
+                      className="w-full h-3 bg-gradient-to-r from-blue-200 to-purple-200 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-sm text-gray-500 mt-2">
+                      <span>10</span>
+                      <span className="text-2xl font-bold text-blue-600">{monthlyOrders}</span>
+                      <span>1000+</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-orange-50 rounded-xl p-6 border-2 border-orange-100">
-                  <div className="flex items-center gap-2 mb-4">
-                    <TrendingDown className="w-5 h-5 text-orange-600" />
-                    <h3 className="font-bold text-gray-900">Con PedidosYa (27.5%)</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div>
-                      <div className="text-sm text-gray-600">Comisión mensual</div>
-                      <div className="text-2xl font-bold text-orange-600">
-                        S/ {pedidosYaCommission.toFixed(2)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-gray-600">Recibes</div>
-                      <div className="text-xl font-semibold text-gray-900">
-                        S/ {(monthlySales - pedidosYaCommission).toFixed(2)}
-                      </div>
+                <div>
+                  <label className="block text-lg font-semibold text-gray-700 mb-4">
+                    {businessData.valueLabel} (S/)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="range"
+                      min="5"
+                      max="200"
+                      value={averageOrderValue}
+                      onChange={(e) => setAverageOrderValue(Number(e.target.value))}
+                      className="w-full h-3 bg-gradient-to-r from-green-200 to-blue-200 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                    <div className="flex justify-between text-sm text-gray-500 mt-2">
+                      <span>S/ 5</span>
+                      <span className="text-2xl font-bold text-green-600">S/ {averageOrderValue}</span>
+                      <span>S/ 200+</span>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                  <h3 className="font-bold text-gray-900">Con Tubarrio.pe (Plan Emprendedor)</h3>
+            {/* Results */}
+            <div className="space-y-6">
+              {/* Monthly Revenue */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-500">
+                <div className="flex items-center gap-3 mb-2">
+                  <TrendingUp className="w-6 h-6 text-blue-500" />
+                  <h4 className="text-lg font-semibold text-gray-700">Ingresos mensuales</h4>
                 </div>
-                <div className="grid md:grid-cols-2 gap-6">
+                <p className="text-3xl font-bold text-blue-600">S/ {monthlyRevenue.toLocaleString()}</p>
+              </div>
+
+              {/* Current Commissions */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-red-500">
+                <div className="flex items-center gap-3 mb-2">
+                  <DollarSign className="w-6 h-6 text-red-500" />
+                  <h4 className="text-lg font-semibold text-gray-700">Comisiones actuales</h4>
+                </div>
+                <p className="text-3xl font-bold text-red-600">-S/ {currentCommissions.toLocaleString()}</p>
+                <p className="text-sm text-gray-500 mt-1">{(businessData.commission * 100)}% de comisión</p>
+              </div>
+
+              {/* Tubarrio Fee */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-orange-500">
+                <div className="flex items-center gap-3 mb-2">
+                  <Zap className="w-6 h-6 text-orange-500" />
+                  <h4 className="text-lg font-semibold text-gray-700">Con Tubarrio.pe</h4>
+                </div>
+                <p className="text-3xl font-bold text-orange-600">S/ {tubarrioFee}</p>
+                <p className="text-sm text-gray-500 mt-1">Tarifa fija mensual</p>
+              </div>
+
+              {/* Savings */}
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl shadow-xl p-6 text-white">
+                <h4 className="text-xl font-semibold mb-2">💰 Tu ahorro</h4>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm text-gray-600">Costo mensual fijo</div>
-                    <div className="text-2xl font-bold text-[#ff7200]">
-                      S/ {tubarrioMonthly.toFixed(2)}
-                    </div>
-                    <div className="text-sm text-green-600 font-semibold mt-1">
-                      Sin comisiones por venta
-                    </div>
+                    <p className="text-sm opacity-90">Mensual</p>
+                    <p className="text-2xl font-bold">S/ {monthlySavings.toLocaleString()}</p>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-600">Recibes</div>
-                    <div className="text-2xl font-bold text-green-600">
-                      S/ {(monthlySales - tubarrioMonthly).toFixed(2)}
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">
-                      100% de tus ventas menos la mensualidad
-                    </div>
+                    <p className="text-sm opacity-90">Anual</p>
+                    <p className="text-2xl font-bold">S/ {yearlySavings.toLocaleString()}</p>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div className="mt-8 p-6 bg-[#ff7200] rounded-xl text-white">
-                <h3 className="text-2xl font-bold mb-4 text-center">Tu Ahorro Potencial</h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="text-center">
-                    <div className="text-sm opacity-90 mb-1">vs Rappi</div>
-                    <div className="text-3xl font-bold mb-2">
-                      S/ {monthlyRappiSavings.toFixed(2)}
-                    </div>
-                    <div className="text-sm opacity-90">por mes</div>
-                    <div className="text-xl font-semibold mt-2 bg-white/20 rounded-lg py-2 px-4 inline-block">
-                      S/ {yearlyRappiSavings.toFixed(2)} al año
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-sm opacity-90 mb-1">vs PedidosYa</div>
-                    <div className="text-3xl font-bold mb-2">
-                      S/ {monthlyPedidosYaSavings.toFixed(2)}
-                    </div>
-                    <div className="text-sm opacity-90">por mes</div>
-                    <div className="text-xl font-semibold mt-2 bg-white/20 rounded-lg py-2 px-4 inline-block">
-                      S/ {yearlyPedidosYaSavings.toFixed(2)} al año
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-center text-sm text-gray-600 mt-6">
-                * Cálculos basados en comisiones promedio. Los valores reales pueden variar según el tipo de negocio y acuerdos comerciales.
+          {/* CTA */}
+          <div className="text-center mt-16">
+            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                ¡Empieza a ahorrar hoy mismo!
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Con Tubarrio.pe podrías ahorrar <span className="font-bold text-green-600">S/ {monthlySavings.toLocaleString()}</span> cada mes
               </p>
-            </CardContent>
-          </Card>
+              <button 
+                onClick={() => {
+                  const contactSection = document.getElementById('contact');
+                  contactSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                Solicitar mi sitio web
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          height: 24px;
+          width: 24px;
+          border-radius: 50%;
+          background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+          cursor: pointer;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .slider::-moz-range-thumb {
+          height: 24px;
+          width: 24px;
+          border-radius: 50%;
+          background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+      `}</style>
     </section>
   );
 }

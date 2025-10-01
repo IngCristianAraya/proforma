@@ -1,292 +1,197 @@
-import { Button } from '@/components/ui/button';
-import { Check, MapPin, Star, Globe, ShoppingCart, Building } from 'lucide-react';
+import { Check, Star, Zap, Crown } from 'lucide-react';
 
-export function PricingPlans() {
-  const plans = [
-    {
-      name: 'Listing Básico',
-      price: 15,
-      icon: MapPin,
-      description: 'Aparece en nuestro directorio',
-      popular: false,
-      features: [
-        'Perfil completo del negocio',
-        'Descripción del servicio',
-        'Hasta 5 imágenes',
-        'Horarios de atención',
-        'Ubicación en mapa',
-        'Botón de WhatsApp',
-        'Redes sociales',
-        'Rating y reseñas'
-      ]
-    },
-    {
-      name: 'Listing + Banner',
-      price: 25,
-      icon: Star,
-      description: 'Destacado en página principal',
-      popular: true,
-      features: [
-        'Todo del Listing Básico +',
-        'Banner en página principal',
-        'Mayor visibilidad',
-        'Posición destacada',
-        'Aparece en búsquedas top',
-        'Estadísticas de visitas',
-        'Soporte prioritario'
-      ]
-    },
-    {
-      name: 'Landing Page',
-      price: 150,
-      icon: Globe,
-      description: 'Página web informativa',
-      popular: false,
-      oneTime: true,
-      additionalCost: 15,
-      features: [
-        'Diseño personalizado',
-        'Página web completa',
-        'Subdominio incluido',
-        'Tecnología moderna',
-        'Responsive design',
-        'SEO optimizado',
-        'Sin hosting adicional',
-        'Despliegue en Vercel',
-        '+ S/15/mes para listing en web'
-      ]
+interface PricingPlansProps {
+  businessType: string;
+}
+
+export function PricingPlans({ businessType }: PricingPlansProps) {
+  const getBusinessSpecificFeatures = (type: string) => {
+    switch (type) {
+      case 'restaurantes':
+        return {
+          landing: ['Menú digital', 'Pedidos WhatsApp', 'Horarios'],
+          corporativa: ['Menú completo', 'Reservas online', 'Delivery integrado', 'Galería fotos']
+        };
+      case 'lavanderias':
+        return {
+          landing: ['Lista servicios', 'Precios claros', 'Contacto directo'],
+          corporativa: ['Calculadora precios', 'Recojo/entrega', 'Seguimiento pedidos', 'Promociones']
+        };
+      case 'peluquerias':
+        return {
+          landing: ['Servicios y precios', 'Citas WhatsApp', 'Ubicación'],
+          corporativa: ['Galería trabajos', 'Reserva online', 'Promociones', 'Equipo profesional']
+        };
+      case 'tiendas':
+        return {
+          landing: ['Catálogo productos', 'Precios', 'Contacto'],
+          corporativa: ['Tienda virtual', 'Carrito compras', 'Pagos online', 'Inventario']
+        };
+      case 'salud':
+        return {
+          landing: ['Servicios médicos', 'Citas WhatsApp', 'Horarios'],
+          corporativa: ['Especialidades', 'Citas online', 'Historia clínica', 'Telemedicina']
+        };
+      default:
+        return {
+          landing: ['Información básica', 'Contacto directo', 'Ubicación'],
+          corporativa: ['Sitio completo', 'Funciones avanzadas', 'Integración WhatsApp', 'SEO optimizado']
+        };
     }
-  ];
-
-  const additionalServices = [
-    {
-      name: 'Web Corporativa',
-      price: 300,
-      icon: Building,
-      description: 'Sitio web completo con backend',
-      additionalCost: 15,
-      features: [
-        'Diseño corporativo completo',
-        'Sistema de login',
-        'Base de datos',
-        'Panel administrativo',
-        'Subdominio incluido',
-        'Dominio personalizado (+S/20)',
-        '+ S/15/mes para listing en web'
-      ]
-    },
-    {
-      name: 'Tienda Virtual',
-      price: 500,
-      icon: ShoppingCart,
-      description: 'E-commerce completo',
-      additionalCost: 15,
-      features: [
-        'Catálogo de productos',
-        'Carrito de compras',
-        'Pasarela de pagos',
-        'Gestión de inventario',
-        'Panel de administración',
-        'Reportes de ventas',
-        '+ S/15/mes para listing en web'
-      ]
-    }
-  ];
-
-  const scrollToContact = () => {
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const features = getBusinessSpecificFeatures(businessType);
+
   return (
-    <section className="py-20 bg-slate-900">
+    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-            Servicios y Precios de TUBARRIO.PE
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Planes Simples
           </h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-6">
-            Desde listing básico hasta desarrollo web completo. Elige lo que necesita tu negocio.
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Elige el plan perfecto para tu negocio. Sin letra pequeña.
           </p>
-          <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold">
-            <Check className="w-4 h-4" />
-            <span>Subdominios incluidos • Sin hosting adicional</span>
-          </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
-          {plans.map((plan, index) => {
-            const Icon = plan.icon;
-            return (
-              <div
-                key={index}
-                className={`relative bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-105 ${
-                  plan.popular ? 'ring-4 ring-[#ff7200] ring-opacity-50' : ''
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute top-0 right-0 bg-[#ff7200] text-white px-4 py-1 text-sm font-semibold rounded-bl-lg">
-                    Más Popular
-                  </div>
-                )}
-
-                <div className="p-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                      plan.popular ? 'bg-[#ff7200] text-white' : 'bg-gray-100 text-gray-600'
-                    }`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-                      <p className="text-sm text-gray-600">{plan.description}</p>
-                    </div>
-                  </div>
-
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-bold text-gray-900">S/{plan.price}</span>
-                      <span className="text-gray-600">
-                        {plan.oneTime ? 'pago único' : '/mes'}
-                      </span>
-                    </div>
-                    {plan.oneTime && plan.additionalCost && (
-                      <p className="text-sm text-orange-600 font-medium mt-1">
-                        + S/{plan.additionalCost}/mes para listing
-                      </p>
-                    )}
-                    {!plan.oneTime && (
-                      <p className="text-sm text-green-600 font-medium mt-1">
-                        Sin comisiones por venta
-                      </p>
-                    )}
-                  </div>
-
-                  <Button
-                    onClick={scrollToContact}
-                    className={`w-full mb-6 ${
-                      plan.popular
-                        ? 'bg-[#ff7200] hover:bg-[#e66600] text-white'
-                        : 'bg-gray-900 hover:bg-gray-800 text-white'
-                    }`}
-                    size="lg"
-                  >
-                    {plan.oneTime ? 'Solicitar Cotización' : 'Empezar Ahora'}
-                  </Button>
-
-                  <div className="space-y-3">
-                    {plan.features.map((feature, fIndex) => (
-                      <div key={fIndex} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-gray-700">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {/* Landing Page Plan */}
+          <div className="relative bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden group hover:shadow-2xl transition-all duration-300">
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+            
+            <div className="p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Landing Page</h3>
+                  <p className="text-gray-600">Perfecto para empezar</p>
                 </div>
               </div>
-            );
-          })}
-        </div>
 
-        {/* Servicios adicionales de desarrollo web */}
-        <div className="bg-gray-50 rounded-2xl p-8 mb-16">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold mb-2">Servicios de Desarrollo Web</h3>
-            <p className="text-gray-600">Soluciones completas para hacer crecer tu negocio online</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            {additionalServices.map((service, index) => {
-              const Icon = service.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl p-6 shadow-md border border-gray-200"
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
-                      <Icon className="w-6 h-6 text-purple-600" />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-bold">{service.name}</h4>
-                      <p className="text-gray-600 text-sm">{service.description}</p>
-                    </div>
-                    <div className="ml-auto text-right">
-                      <span className="text-2xl font-bold text-gray-900">S/{service.price}</span>
-                      <p className="text-sm text-gray-600">pago único</p>
-                      {service.additionalCost && (
-                        <p className="text-xs text-orange-600 font-medium">
-                          + S/{service.additionalCost}/mes listing
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <ul className="space-y-2">
-                    {service.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start gap-2">
-                        <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-700 text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+              <div className="mb-8">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-bold text-gray-900">S/165</span>
+                  <span className="text-gray-600">una vez</span>
                 </div>
-              );
-            })}
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-lg text-gray-900 font-semibold">+ S/15</span>
+                  <span className="text-gray-600">/mes mantenimiento</span>
+                </div>
+                <div className="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full inline-block mt-3">
+                  🎉 Primer mes GRATIS
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                {features.landing.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-blue-600" />
+                    </div>
+                    <span className="text-gray-700 font-medium">{feature}</span>
+                  </div>
+                ))}
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 text-blue-600" />
+                  </div>
+                  <span className="text-gray-700 font-medium">Listo en 5 días</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 text-blue-600" />
+                  </div>
+                  <span className="text-gray-700 font-medium">Soporte WhatsApp</span>
+                </div>
+              </div>
+
+              <button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                Empezar ahora
+              </button>
+            </div>
+          </div>
+
+          {/* Web Corporativa Plan */}
+          <div className="relative bg-white rounded-3xl shadow-xl border-2 border-purple-200 overflow-hidden group hover:shadow-2xl transition-all duration-300">
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+            <div className="absolute -top-3 -right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold transform rotate-12">
+              <Star className="w-4 h-4 inline mr-1" />
+              POPULAR
+            </div>
+            
+            <div className="p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <Crown className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Web Corporativa</h3>
+                  <p className="text-gray-600">Solución completa</p>
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-bold text-gray-900">S/364</span>
+                  <span className="text-gray-600">una vez</span>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-lg text-gray-900 font-semibold">+ S/15</span>
+                  <span className="text-gray-600">/mes mantenimiento</span>
+                </div>
+                <div className="bg-purple-100 text-purple-800 text-sm font-semibold px-3 py-1 rounded-full inline-block mt-3">
+                  🚀 Más vendido
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-8">
+                {features.corporativa.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-purple-600" />
+                    </div>
+                    <span className="text-gray-700 font-medium">{feature}</span>
+                  </div>
+                ))}
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 text-purple-600" />
+                  </div>
+                  <span className="text-gray-700 font-medium">Listo en 7 días</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 text-purple-600" />
+                  </div>
+                  <span className="text-gray-700 font-medium">Soporte prioritario</span>
+                </div>
+              </div>
+
+              <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                Elegir este plan
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Sección de inmuebles */}
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-8 mb-16">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-              <Building className="w-8 h-8 text-green-600" />
+        {/* Trust Section */}
+        <div className="text-center mt-16">
+          <div className="inline-flex items-center gap-8 bg-white rounded-2xl px-8 py-6 shadow-lg">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-gray-700 font-medium">Sin permanencia</span>
             </div>
-            <h3 className="text-2xl font-bold mb-2">Sección de Inmuebles</h3>
-            <p className="text-gray-600 mb-4">Publica alquileres y ventas de propiedades</p>
-            <div className="flex items-baseline justify-center gap-1 mb-6">
-              <span className="text-3xl font-bold text-gray-900">S/25</span>
-              <span className="text-gray-600">/mes por propiedad</span>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+              <span className="text-gray-700 font-medium">Garantía 30 días</span>
             </div>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h4 className="font-semibold mb-3 text-green-800">Alquileres incluye:</h4>
-              <ul className="space-y-2">
-                {['Fotos de la propiedad', 'Descripción detallada', 'Precio y condiciones', 'Ubicación exacta', 'Contacto directo', 'Características del inmueble'].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3 text-blue-800">Ventas incluye:</h4>
-              <ul className="space-y-2">
-                {['Galería de imágenes', 'Precio de venta', 'Documentación legal', 'Tour virtual (opcional)', 'Contacto con agente', 'Historial de la propiedad'].map((feature, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <Check className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
+              <span className="text-gray-700 font-medium">Soporte incluido</span>
             </div>
           </div>
-        </div>
-
-        <div className="mt-12 text-center">
-          <p className="text-gray-600 mb-4">
-            ¿Necesitas un plan personalizado para tu negocio?
-          </p>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={scrollToContact}
-            className="border-[#ff7200] text-[#ff7200] hover:bg-[#ff7200] hover:text-white"
-          >
-            Contacta con Ventas
-          </Button>
         </div>
       </div>
     </section>
