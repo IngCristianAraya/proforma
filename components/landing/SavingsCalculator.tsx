@@ -3,6 +3,11 @@
 import { useState } from 'react';
 import { Calculator, TrendingUp, DollarSign, Zap } from 'lucide-react';
 
+// Función de formateo consistente para evitar errores de hidratación
+const formatNumber = (num: number): string => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
 interface SavingsCalculatorProps {
   businessType: string;
 }
@@ -133,7 +138,7 @@ export function SavingsCalculator({ businessType }: SavingsCalculatorProps) {
                   <TrendingUp className="w-6 h-6 text-blue-500" />
                   <h4 className="text-lg font-semibold text-gray-700">Ingresos mensuales</h4>
                 </div>
-                <p className="text-3xl font-bold text-blue-600">S/ {monthlyRevenue.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-blue-600">S/ {formatNumber(monthlyRevenue)}</p>
               </div>
 
               {/* Current Commissions */}
@@ -142,7 +147,7 @@ export function SavingsCalculator({ businessType }: SavingsCalculatorProps) {
                   <DollarSign className="w-6 h-6 text-red-500" />
                   <h4 className="text-lg font-semibold text-gray-700">Comisiones actuales</h4>
                 </div>
-                <p className="text-3xl font-bold text-red-600">-S/ {currentCommissions.toLocaleString()}</p>
+                <p className="text-3xl font-bold text-red-600">-S/ {formatNumber(currentCommissions)}</p>
                 <p className="text-sm text-gray-500 mt-1">{(businessData.commission * 100)}% de comisión</p>
               </div>
 
@@ -162,11 +167,11 @@ export function SavingsCalculator({ businessType }: SavingsCalculatorProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm opacity-90">Mensual</p>
-                    <p className="text-2xl font-bold">S/ {monthlySavings.toLocaleString()}</p>
+                    <p className="text-2xl font-bold">S/ {formatNumber(monthlySavings)}</p>
                   </div>
                   <div>
                     <p className="text-sm opacity-90">Anual</p>
-                    <p className="text-2xl font-bold">S/ {yearlySavings.toLocaleString()}</p>
+                    <p className="text-2xl font-bold">S/ {formatNumber(yearlySavings)}</p>
                   </div>
                 </div>
               </div>
@@ -180,7 +185,7 @@ export function SavingsCalculator({ businessType }: SavingsCalculatorProps) {
                 ¡Empieza a ahorrar hoy mismo!
               </h3>
               <p className="text-gray-600 mb-6">
-                Con Tubarrio.pe podrías ahorrar <span className="font-bold text-green-600">S/ {monthlySavings.toLocaleString()}</span> cada mes
+                Con Tubarrio.pe podrías ahorrar <span className="font-bold text-green-600">S/ {formatNumber(monthlySavings)}</span> cada mes
               </p>
               <button 
                 onClick={() => {
