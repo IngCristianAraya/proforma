@@ -291,8 +291,8 @@ export function WebComparison({ selectedCategory = 'Todos', businessType = 'gene
                   Tienda Virtual
                 </CardTitle>
                 <div className="text-3xl font-bold mt-2">
-                  S/564
-                  <span className="text-sm font-normal block opacity-90">pago único + S/15/mes</span>
+                  S/500
+                  <span className="text-sm font-normal block opacity-90">pago único + S/15/mes listing</span>
                 </div>
               </CardHeader>
               <CardContent className="p-6">
@@ -324,17 +324,7 @@ export function WebComparison({ selectedCategory = 'Todos', businessType = 'gene
           </div>
         )}
 
-        <div className="text-center mt-12">
-          <button 
-            onClick={() => {
-              const contactSection = document.getElementById('contact');
-              contactSection?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="bg-white text-gray-800 px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:shadow-xl"
-          >
-            Solicitar mi proforma personalizada
-          </button>
-        </div>
+
       </div>
     </section>
   );

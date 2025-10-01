@@ -186,15 +186,96 @@ export function InteractiveQuote({ businessType }: InteractiveQuoteProps) {
   
   const estimatedROI = Math.round(calculateROI());
 
+  // Función para generar mensaje de WhatsApp con datos de la cotización
+  const generateWhatsAppMessage = () => {
+    const modules = selectedModuleData.map(module => {
+      const isMonthlyService = module.id === 'listing-basico' || module.id === 'listing-banner';
+      let price;
+      
+      if (isMonthlyService) {
+        price = `S/${module.price}/mes`;
+      } else if (module.id === 'web-corporativa') {
+        price = `S/${businessPricing.basePrice}`;
+      } else if (module.id === 'landing-page' || module.id === 'tienda-virtual') {
+        price = `S/${module.price}`;
+      } else {
+        price = `S/${Math.round(module.price * businessPricing.multiplier)}`;
+      }
+      
+      return `• ${module.name}: ${price}`;
+    }).join('\n');
+
+    const message = `🌐 *SOLICITUD DE COTIZACIÓN FORMAL*
+
+*Tipo de Negocio:* ${businessPricing.description}
+
+*Módulos Seleccionados:*
+${modules}
+
+*RESUMEN DE INVERSIÓN:*
+${oneTimeTotal > 0 ? `💰 Pago único: S/${Math.round(oneTimeTotal)}` : ''}
+${monthlyTotal > 0 ? `📅 Mensual: S/${monthlyTotal}/mes` : ''}
+⏱️ Tiempo de desarrollo: ${totalWeeks} semana${totalWeeks > 1 ? 's' : ''}
+
+¡Hola! Me interesa esta cotización y me gustaría recibir el formulario para proceder con el desarrollo de mi página web. ¿Podrías enviarme los detalles para completar la información necesaria?`;
+
+    return encodeURIComponent(message);
+  };
+
+  const sendWhatsAppQuote = () => {
+    const message = generateWhatsAppMessage();
+    const whatsappUrl = `https://wa.me/51901426737?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const generatePDF = async () => {
     const { jsPDF } = await import('jspdf');
-    const html2canvas = (await import('html2canvas')).default;
-    
-    // Create PDF content
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.width;
+    const pageHeight = pdf.internal.pageSize.height;
+    let yPosition = 20;
+
+    const checkPageBreak = (requiredSpace: number) => {
+      if (yPosition + requiredSpace > pageHeight - 20) {
+        pdf.addPage();
+        yPosition = 20;
+        
+        // Replicar exactamente el mismo encabezado de la primera página
+        
+        // HEADER PROFESIONAL COMPLETO (igual que la primera página)
+        // Línea superior naranja
+        pdf.setFillColor(255, 114, 0); // Color naranja del logo
+        pdf.rect(0, 0, pageWidth, 3, 'F');
+
+        // Intentar cargar y añadir el logo (igual que la primera página)
+        // Nota: En la segunda página usamos fallback ya que no podemos usar await aquí
+        pdf.setFontSize(18);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(255, 114, 0);
+        pdf.text('TUBARRIO.PE', 15, 25);
+
+        // Información de contacto (lado derecho) - igual que la primera página
+        pdf.setFontSize(12);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('PROPUESTA COMERCIAL', pageWidth - 15, 15, { align: 'right' });
+        
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(100, 100, 100);
+        pdf.text('Lima - Perú', pageWidth - 15, 22, { align: 'right' });
+        pdf.text('+51 901 426 737', pageWidth - 15, 28, { align: 'right' });
+        pdf.text('ingcristian.araya@gmail.com', pageWidth - 15, 34, { align: 'right' });
+
+        // Línea separadora (igual que la primera página)
+        pdf.setDrawColor(220, 220, 220);
+        pdf.setLineWidth(0.5);
+        pdf.line(15, 40, pageWidth - 15, 40);
+        
+        yPosition = 55; // Mismo espacio que en la primera página
+      }
+    };
+
     // Función para cargar imagen como base64
     const loadImageAsBase64 = (src: string): Promise<string> => {
       return new Promise((resolve, reject) => {
@@ -212,353 +293,315 @@ export function InteractiveQuote({ businessType }: InteractiveQuoteProps) {
         img.src = src;
       });
     };
-    
-    // Header más compacto con logo - fondo blanco
-    pdf.setFillColor(255, 255, 255); // Fondo blanco
-    pdf.rect(0, 0, pageWidth, 15, 'F');
-    
-    // Borde inferior del header
-    pdf.setDrawColor(200, 200, 200);
-    pdf.setLineWidth(0.3);
-    pdf.line(0, 15, pageWidth, 15);
-    
+
+    // HEADER PROFESIONAL SIMPLE
+    // Línea superior naranja
+    pdf.setFillColor(255, 114, 0); // Color naranja del logo
+    pdf.rect(0, 0, pageWidth, 3, 'F');
+
     // Intentar cargar y añadir el logo
     try {
       const logoBase64 = await loadImageAsBase64('/logos/tubarriope_logo_penegro2.webp');
-      // Añadir logo centrado en el header
-      pdf.addImage(logoBase64, 'PNG', (pageWidth - 25) / 2, 2, 25, 11);
+      pdf.addImage(logoBase64, 'PNG', 15, 10, 40, 20);
     } catch (error) {
-      // Si falla la carga del logo, usar solo texto
-      pdf.setFontSize(20);
-      pdf.setTextColor(0, 0, 0);
-      pdf.setFont(undefined, 'bold');
-      pdf.text('TUBARRIO', pageWidth / 2, 11, { align: 'center' });
+      // Fallback con texto estilizado
+      pdf.setFontSize(18);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(255, 114, 0);
+      pdf.text('TUBARRIO.PE', 15, 25);
     }
-    
-    // Título principal más compacto
-    let yPosition = 22;
-    
-    // Fondo para el título más pequeño
-    pdf.setFillColor(248, 249, 250);
-    pdf.rect(15, yPosition - 3, pageWidth - 30, 10, 'F');
-    pdf.setDrawColor(220, 220, 220);
-    pdf.setLineWidth(0.3);
-    pdf.rect(15, yPosition - 3, pageWidth - 30, 10, 'S');
-    
+
+    // Información de contacto (lado derecho)
     pdf.setFontSize(12);
-    pdf.setTextColor(255, 165, 0);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('COTIZACIÓN DE SERVICIOS DIGITALES', pageWidth / 2, yPosition + 1, { align: 'center' });
-    
-    yPosition += 8;
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('PROPUESTA COMERCIAL', pageWidth - 15, 15, { align: 'right' });
     
     pdf.setFontSize(9);
-    pdf.setTextColor(0, 0, 0); // Cambiar a negro para mejor visibilidad
-    pdf.setFont(undefined, 'normal');
-    pdf.text(`Propuesta para ${businessPricing.description}`, pageWidth / 2, yPosition, { align: 'center' });
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Lima - Perú', pageWidth - 15, 22, { align: 'right' });
+    pdf.text('+51 901 426 737', pageWidth - 15, 28, { align: 'right' });
+    pdf.text('ingcristian.araya@gmail.com', pageWidth - 15, 34, { align: 'right' });
+
+    // Línea separadora
+    pdf.setDrawColor(220, 220, 220);
+    pdf.setLineWidth(0.5);
+    pdf.line(15, 40, pageWidth - 15, 40);
+
+    yPosition = 55;
+
+    // TÍTULO PRINCIPAL
+    checkPageBreak(20);
     
-    yPosition += 8;
+    pdf.setFontSize(20);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(255, 114, 0);
+    pdf.text('PROPUESTA DIGITAL PERSONALIZADA', pageWidth / 2, yPosition, { align: 'center' });
     
-    // Información de la cotización más compacta
-    pdf.setFillColor(255, 165, 0, 0.1);
-    pdf.rect(15, yPosition - 2, pageWidth - 30, 6, 'F');
+    yPosition += 20; // Reducido de 30 a 20
+
+    // INFORMACIÓN DEL CLIENTE
+    checkPageBreak(50);
     
-    pdf.setFontSize(7);
-    pdf.setTextColor(255, 255, 255); // Cambiar a blanco para mejor visibilidad
-    pdf.text(`Fecha: ${new Date().toLocaleDateString('es-PE')}`, 20, yPosition + 1);
-    pdf.text(`Válida hasta: ${new Date(Date.now() + 30*24*60*60*1000).toLocaleDateString('es-PE')}`, pageWidth - 20, yPosition + 1, { align: 'right' });
+    // Fondo gris claro
+    pdf.setFillColor(248, 248, 248);
+    pdf.roundedRect(10, yPosition, pageWidth - 20, 50, 5, 5, 'F'); // Reducido altura de 55 a 50
     
-    yPosition += 8;
+    // Borde naranja sutil
+    pdf.setDrawColor(255, 114, 0);
+    pdf.setLineWidth(1);
+    pdf.roundedRect(10, yPosition, pageWidth - 20, 50, 5, 5, 'S');
     
-    // Sección de módulos más compacta
-    pdf.setFillColor(255, 165, 0, 0.15);
-    pdf.rect(15, yPosition - 4, pageWidth - 30, 10, 'F');
-    pdf.setDrawColor(255, 165, 0);
-    pdf.setLineWidth(0.3);
-    pdf.rect(15, yPosition - 4, pageWidth - 30, 10, 'S');
+    // Título de la sección - centrado verticalmente
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('INFORMACIÓN DEL CLIENTE', 20, yPosition + 12); // Ajustado para mejor centrado
+
+    // Grid de información (2 columnas) - mejor centrado vertical
+    pdf.setFontSize(10);
     
-    pdf.setFontSize(12); // Aumentar de 11 a 12
-    pdf.setTextColor(255, 165, 0);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('SERVICIOS INCLUIDOS', 20, yPosition + 2);
-    yPosition += 16; // Aumentar espacio de 14 a 16
+    // Columna izquierda
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Tipo de Negocio:', 20, yPosition + 24); // Ajustado
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(`${businessPricing.description}`, 20, yPosition + 31); // Ajustado
     
-    // Encabezados de tabla más compactos
-    pdf.setFillColor(240, 240, 240);
-    pdf.rect(15, yPosition - 2, pageWidth - 30, 8, 'F'); // Aumentar altura de 6 a 8
-    pdf.setDrawColor(200, 200, 200);
-    pdf.setLineWidth(0.2);
-    pdf.rect(15, yPosition - 2, pageWidth - 30, 8, 'S');
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Fecha de Propuesta:', 20, yPosition + 39); // Ajustado
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(`${new Date().toLocaleDateString('es-PE')}`, 20, yPosition + 46); // Ajustado
+
+    // Columna derecha
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Tiempo de Desarrollo:', 110, yPosition + 24); // Ajustado
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(`${totalWeeks} semanas`, 110, yPosition + 31); // Ajustado
     
-    pdf.setFontSize(9); // Aumentar de 8 a 9
-    pdf.setTextColor(40, 40, 40);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('Servicio', 20, yPosition + 2); // Ajustar posición vertical
-    pdf.text('Precio', 120, yPosition + 2);
-    pdf.text('Desarrollo', 160, yPosition + 2);
-    yPosition += 10; // Aumentar espacio de 8 a 10
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Validez de Propuesta:', 110, yPosition + 39); // Ajustado
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('30 días', 110, yPosition + 46); // Ajustado
+
+    yPosition += 60; // Reducido de 75 a 60
+
+    // INVERSIÓN TOTAL - DESTACADO
+    checkPageBreak(55); // Aumentado para más contenido
     
-    // Filas de módulos más compactas
-    pdf.setFont(undefined, 'normal');
-    pdf.setFontSize(9); // Aumentar de 8 a 9
-    selectedModuleData.forEach((module) => {
-      let adjustedPrice;
-      if (module.id === 'web-corporativa') {
-        adjustedPrice = businessPricing.basePrice;
-      } else if (module.id === 'landing-page' || module.id === 'tienda-virtual') {
-        adjustedPrice = module.price;
-      } else {
-        adjustedPrice = module.price * businessPricing.multiplier;
-      }
-      
-      pdf.text(module.name, 20, yPosition);
-      pdf.text(`S/${Math.round(adjustedPrice)}`, 120, yPosition);
-      pdf.text(`${module.timeWeeks} semanas`, 160, yPosition);
-      yPosition += 8; // Aumentar espacio entre filas de 6 a 8
-    });
+    // Fondo naranja claro
+    pdf.setFillColor(255, 237, 213);
+    pdf.roundedRect(10, yPosition, pageWidth - 20, 50, 8, 8, 'F'); // Aumentado altura
     
-    // Línea de total
-    pdf.setDrawColor(255, 165, 0);
-    pdf.line(20, yPosition, 190, yPosition);
-    yPosition += 8; // Aumentar espacio de 6 a 8
-    
-    // Total más compacto
-    pdf.setFont(undefined, 'bold');
-    pdf.setFontSize(12); // Aumentar de 11 a 12
-    pdf.setTextColor(255, 165, 0);
-    pdf.text('INVERSIÓN TOTAL:', 20, yPosition);
+    // Borde naranja
+    pdf.setDrawColor(255, 114, 0);
+    pdf.setLineWidth(2);
+    pdf.roundedRect(10, yPosition, pageWidth - 20, 50, 8, 8, 'S');
+
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(255, 114, 0);
+    pdf.text('INVERSIÓN TOTAL', 20, yPosition + 15);
     
     if (oneTimeTotal > 0) {
-      pdf.text(`Pago único: S/${Math.round(oneTimeTotal)}`, 120, yPosition);
-      yPosition += 10; // Aumentar espacio de 8 a 10
-    }
-    if (monthlyTotal > 0) {
-      pdf.text(`Mensual: S/${monthlyTotal}`, 120, yPosition);
-      yPosition += 10; // Aumentar espacio de 8 a 10
-    }
-    
-    // Tiempo total de desarrollo
-    pdf.setTextColor(0, 0, 0);
-    pdf.text(`Tiempo total de desarrollo: ${totalWeeks} semanas`, 20, yPosition);
-    yPosition += 15;
-    
-    // Función para verificar si necesitamos nueva página
-    const checkPageBreak = (requiredSpace: number) => {
-      if (yPosition + requiredSpace > pageHeight - 30) {
-        pdf.addPage();
-        yPosition = 30;
-      }
-    };
-    
-    // Descripción de servicios más compacta
-    checkPageBreak(30);
-    pdf.setFillColor(255, 165, 0, 0.15);
-    pdf.rect(15, yPosition - 3, pageWidth - 30, 10, 'F'); // Aumentar altura
-    pdf.setDrawColor(255, 165, 0);
-    pdf.setLineWidth(0.3);
-    pdf.rect(15, yPosition - 3, pageWidth - 30, 10, 'S');
-    
-    pdf.setFontSize(12); // Aumentar de 10 a 12
-    pdf.setTextColor(255, 165, 0);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('DESCRIPCIÓN DE SERVICIOS', 20, yPosition + 2);
-    yPosition += 15; // Aumentar espacio
-    
-    pdf.setFontSize(9); // Aumentar de 8 a 9
-    pdf.setTextColor(40, 40, 40);
-    
-    // Descripciones más compactas
-    selectedModuleData.forEach((module, index) => {
-      checkPageBreak(12); // Aumentar espacio de verificación
+      pdf.setFontSize(22);
+      pdf.setTextColor(0, 0, 0);
+      pdf.text(`S/ ${Math.round(oneTimeTotal).toLocaleString()}`, 20, yPosition + 30);
       
-      // Fondo alternado más pequeño
+      // Descripción del pago único
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(80, 80, 80);
+      pdf.text('Pago único por desarrollo completo', 20, yPosition + 38);
+      
+      if (monthlyTotal > 0) {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(255, 114, 0);
+        pdf.text(`+ S/ ${monthlyTotal}/mes`, pageWidth - 20, yPosition + 30, { align: 'right' });
+        
+        // Descripción del pago mensual
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(80, 80, 80);
+        pdf.text('Hosting + dominio + mantenimiento', pageWidth - 20, yPosition + 38, { align: 'right' });
+        pdf.text('(incluye actualizaciones y soporte)', pageWidth - 20, yPosition + 45, { align: 'right' });
+      }
+    } else if (monthlyTotal > 0) {
+      pdf.setFontSize(22);
+      pdf.setTextColor(0, 0, 0);
+      pdf.text(`S/ ${monthlyTotal}/mes`, 20, yPosition + 30);
+      
+      // Descripción del servicio mensual
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(80, 80, 80);
+      pdf.text('Servicio mensual completo', 20, yPosition + 38);
+      pdf.text('Incluye hosting, dominio y soporte técnico', 20, yPosition + 45);
+    }
+
+    yPosition += 65; // Ajustado para el nuevo tamaño
+
+    // SERVICIOS INCLUIDOS
+    checkPageBreak(30);
+    
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('SERVICIOS INCLUIDOS', 20, yPosition);
+    
+    yPosition += 15; // Reducido de 20 a 15
+
+    // Lista de servicios
+    selectedModuleData.forEach((service, index) => {
+      checkPageBreak(20); // Reducido de 25 a 20
+      
+      // Fondo alternado
       if (index % 2 === 0) {
         pdf.setFillColor(250, 250, 250);
-        pdf.rect(15, yPosition - 1, pageWidth - 30, 10, 'F'); // Aumentar altura
+        pdf.rect(10, yPosition - 2, pageWidth - 20, 18, 'F'); // Reducido altura
       }
       
-      pdf.setFontSize(10); // Aumentar tamaño de fuente del nombre del servicio
-      pdf.setFont(undefined, 'bold');
-      pdf.setTextColor(255, 165, 0);
-      pdf.text(`${module.name}:`, 20, yPosition + 2);
-      yPosition += 5; // Aumentar espacio después del título
+      // Punto naranja
+      pdf.setFillColor(255, 114, 0);
+      pdf.circle(18, yPosition + 4, 2, 'F');
+
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(0, 0, 0);
+      pdf.text(`${service.name}`, 25, yPosition + 2);
       
-      pdf.setFont(undefined, 'normal');
-      pdf.setTextColor(60, 60, 60);
-      let description = '';
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(80, 80, 80);
+      const description = pdf.splitTextToSize(service.description, pageWidth - 50);
+      pdf.text(description, 25, yPosition + 8);
       
-      switch(module.id) {
-        case 'listing-basico':
-          description = 'Perfil básico en tubarrio.pe con información de contacto, ubicación, descripción, hasta 5 imágenes, botón de WhatsApp y de página web más redes sociales.';
-          break;
-        case 'listing-premium':
-          description = 'Perfil premium con galería de fotos, horarios y promociones destacadas.';
-          break;
-        case 'banner-publicitario':
-          description = 'Banner promocional visible en la página principal de TuBarrio.';
-          break;
-        case 'landing-page':
-          description = 'Página web profesional de una sola página con diseño responsivo y optimizada para conversiones.';
-          break;
-        case 'web-corporativa':
-          description = 'Sitio web completo con múltiples páginas, sistema de gestión de contenido y funcionalidades avanzadas.';
-          break;
-        case 'tienda-virtual':
-          description = 'Tienda online completa con catálogo de productos, carrito de compras y pasarela de pagos.';
-          break;
-        default:
-          description = 'Servicio personalizado según las necesidades del negocio.';
-      }
-      
-      // Dividir descripción en líneas más compactas
-      const maxWidth = pageWidth - 50;
-      const lines = pdf.splitTextToSize(description, maxWidth);
-      lines.forEach((line: string) => {
-        checkPageBreak(4);
-        pdf.text(line, 25, yPosition);
-        yPosition += 4; // Aumentar interlineado de 3 a 4
-      });
-      yPosition += 4; // Aumentar espacio entre servicios de 2 a 4
+      yPosition += 18; // Reducido de 22 a 18
     });
+
+    yPosition += 10; // Reducido de 15 a 10
+
+    // BENEFICIOS Y CONTACTO - DOS COLUMNAS
+    checkPageBreak(80);
     
-    yPosition += 5;
+    const columnWidth = (pageWidth - 30) / 2;
     
-    // DISEÑO GRID más compacto: Beneficios a la izquierda e Información de contacto a la derecha
-    checkPageBreak(45);
+    // Columna izquierda - Beneficios
+    pdf.setFillColor(240, 255, 240);
+    pdf.roundedRect(10, yPosition, columnWidth, 70, 5, 5, 'F');
     
-    // Definir dimensiones del grid
-    const leftColumnWidth = (pageWidth - 40) / 2; // Mitad izquierda
-    const rightColumnWidth = (pageWidth - 40) / 2; // Mitad derecha
-    const leftColumnX = 15;
-    const rightColumnX = leftColumnX + leftColumnWidth + 10; // 10pt de separación
-    const gridStartY = yPosition;
+    pdf.setDrawColor(34, 197, 94);
+    pdf.setLineWidth(1);
+    pdf.roundedRect(10, yPosition, columnWidth, 70, 5, 5, 'S');
     
-    // === COLUMNA IZQUIERDA: BENEFICIOS INCLUIDOS ===
-    pdf.setFillColor(255, 165, 0, 0.15);
-    pdf.rect(leftColumnX, gridStartY - 3, leftColumnWidth, 8, 'F');
-    pdf.setDrawColor(255, 165, 0);
-    pdf.setLineWidth(0.3);
-    pdf.rect(leftColumnX, gridStartY - 3, leftColumnWidth, 10, 'S'); // Aumentar altura
-    
-    pdf.setFontSize(10); // Aumentar de 9 a 10
-    pdf.setTextColor(255, 165, 0);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('BENEFICIOS INCLUIDOS', leftColumnX + 3, gridStartY + 2); // Ajustar posición
-    
-    // Beneficios estándar más compactos
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(34, 197, 94);
+    pdf.text('BENEFICIOS INCLUIDOS', 20, yPosition + 15);
+
     const benefits = [
-      '• Diseño responsivo para móviles y tablets',
-      '• Optimización SEO básica incluida',
-      '• Soporte técnico permanente',
-      '• Integración con redes sociales'
+      'Diseño responsivo y moderno',
+      'Optimización SEO básica',
+      'Integración redes sociales',
+      'Soporte técnico incluido'
     ];
+
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(0, 0, 0);
     
-    // Fondo para los beneficios más compacto
-    const benefitsHeight = benefits.length * 5 + 8; // Aumentar altura por beneficio
-    pdf.setFillColor(248, 255, 248);
-    pdf.rect(leftColumnX, gridStartY + 8, leftColumnWidth, benefitsHeight, 'F'); // Ajustar posición
-    pdf.setDrawColor(220, 220, 220);
-    pdf.setLineWidth(0.2);
-    pdf.rect(leftColumnX, gridStartY + 8, leftColumnWidth, benefitsHeight, 'S');
-    
-    pdf.setFontSize(8.5); // Aumentar de 7.5 a 8.5
-    pdf.setTextColor(40, 40, 40);
-    pdf.setFont(undefined, 'normal');
-    let benefitY = gridStartY + 12; // Ajustar posición inicial
-    benefits.forEach((benefit) => {
-      pdf.text(benefit, leftColumnX + 3, benefitY);
-      benefitY += 5; // Aumentar espacio entre beneficios
+    benefits.forEach((benefit, index) => {
+      pdf.text(`• ${benefit}`, 20, yPosition + 28 + (index * 8));
     });
+
+    // Columna derecha - Contacto
+    pdf.setFillColor(240, 245, 255);
+    pdf.roundedRect(20 + columnWidth, yPosition, columnWidth, 70, 5, 5, 'F');
     
-    // === COLUMNA DERECHA: INFORMACIÓN DE CONTACTO Y PAGO ===
-    pdf.setFillColor(255, 165, 0, 0.15);
-    pdf.rect(rightColumnX, gridStartY - 3, rightColumnWidth, 10, 'F'); // Aumentar altura
-    pdf.setDrawColor(255, 165, 0);
-    pdf.setLineWidth(0.3);
-    pdf.rect(rightColumnX, gridStartY - 3, rightColumnWidth, 10, 'S');
+    pdf.setDrawColor(59, 130, 246);
+    pdf.setLineWidth(1);
+    pdf.roundedRect(20 + columnWidth, yPosition, columnWidth, 70, 5, 5, 'S');
     
-    pdf.setFontSize(10); // Aumentar de 9 a 10
-    pdf.setTextColor(255, 165, 0);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('CONTACTO Y PAGO', rightColumnX + 3, gridStartY + 2); // Ajustar posición
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(59, 130, 246);
+    pdf.text('INFORMACIÓN DE CONTACTO', 30 + columnWidth, yPosition + 15);
+
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('WhatsApp: +51 901 426 737', 30 + columnWidth, yPosition + 28);
+    pdf.text('Email: ingcristian.araya@gmail.com', 30 + columnWidth, yPosition + 36);
     
-    // Fondo para la información de contacto más compacto
-    const contactHeight = 32; // Aumentar altura
-    pdf.setFillColor(250, 250, 255);
-    pdf.rect(rightColumnX, gridStartY + 8, rightColumnWidth, contactHeight, 'F'); // Ajustar posición
-    pdf.setDrawColor(220, 220, 220);
-    pdf.setLineWidth(0.2);
-    pdf.rect(rightColumnX, gridStartY + 8, rightColumnWidth, contactHeight, 'S');
-    
-    pdf.setFontSize(8.5); // Aumentar de 7.5 a 8.5
-    pdf.setTextColor(40, 40, 40);
-    let contactY = gridStartY + 12; // Ajustar posición inicial
-    
-    // Información de contacto más compacta
-    pdf.setFont(undefined, 'bold');
-    pdf.text('CONTACTO:', rightColumnX + 3, contactY);
-    pdf.setFont(undefined, 'normal');
-    pdf.text('WhatsApp: +51999999999', rightColumnX + 3, contactY + 4); // Aumentar espacio
-    contactY += 7; // Aumentar espacio entre secciones
-    
-    pdf.setFont(undefined, 'bold');
-    pdf.text('EMAIL:', rightColumnX + 3, contactY);
-    pdf.setFont(undefined, 'normal');
-    pdf.text('tubarrio2025@gmail.com', rightColumnX + 3, contactY + 4); // Aumentar espacio
-    contactY += 7; // Aumentar espacio entre secciones
-    
-    pdf.setFont(undefined, 'bold');
-    pdf.text('MÉTODOS DE PAGO:', rightColumnX + 3, contactY);
-    pdf.setFont(undefined, 'normal');
-    pdf.text('• Transferencia • Yape • Plin • Efectivo', rightColumnX + 3, contactY + 4); // Aumentar espacio
-    
-    // Actualizar yPosition después del grid más compacto
-    yPosition = Math.max(gridStartY + 8 + benefitsHeight, gridStartY + 8 + contactHeight) + 10; // Ajustar posición y aumentar espacio
-    
-    // Determinar si hay servicios web para mostrar modalidad de pago
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(255, 114, 0);
+    pdf.text('Métodos de Pago:', 30 + columnWidth, yPosition + 48);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('• Yape / Plin', 30 + columnWidth, yPosition + 56);
+    pdf.text('• Transferencia bancaria', 30 + columnWidth, yPosition + 64);
+
+    yPosition += 85;
+
+    // MODALIDAD DE PAGO (solo para servicios web)
     const hasWebServices = selectedModuleData.some(module => 
       ['landing-page', 'web-corporativa', 'tienda-virtual'].includes(module.id)
     );
     
-    // Agregar información de modalidad de pago más compacta
     if (hasWebServices) {
-      checkPageBreak(18); // Aumentar espacio requerido
+      checkPageBreak(45);
       
-      // Fondo para modalidad de pago más pequeño
-      pdf.setFillColor(255, 248, 220);
-      pdf.rect(15, yPosition - 2, pageWidth - 30, 15, 'F'); // Aumentar altura
+      pdf.setFillColor(255, 252, 235);
+      pdf.roundedRect(10, yPosition, pageWidth - 20, 40, 5, 5, 'F');
+      
       pdf.setDrawColor(255, 193, 7);
-      pdf.setLineWidth(0.2);
-      pdf.rect(15, yPosition - 2, pageWidth - 30, 15, 'S');
+      pdf.setLineWidth(1);
+      pdf.roundedRect(10, yPosition, pageWidth - 20, 40, 5, 5, 'S');
+
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(255, 114, 0);
+      pdf.text('MODALIDAD DE PAGO', 20, yPosition + 15);
       
-      pdf.setFont(undefined, 'bold');
-      pdf.setFontSize(9); // Aumentar de 8 a 9
-      pdf.setTextColor(40, 40, 40);
-      pdf.text('MODALIDAD DE PAGO:', 20, yPosition + 2); // Ajustar posición
-      yPosition += 5; // Aumentar espacio
-      pdf.setFont(undefined, 'normal');
-      pdf.setFontSize(8); // Aumentar de 7 a 8
-      pdf.text('• Adelanto del 30% para iniciar el proyecto', 25, yPosition);
-      yPosition += 4; // Aumentar espacio entre líneas
-      pdf.text('• Saldo restante (70%) al finalizar y entregar la web', 25, yPosition);
-      yPosition += 8; // Aumentar espacio final
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(0, 0, 0);
+      pdf.text('• 30% de adelanto para iniciar el proyecto', 20, yPosition + 25);
+      pdf.text('• 70% restante al completar y entregar el proyecto', 20, yPosition + 33);
+
+      yPosition += 55;
     }
+
+    // FOOTER
+    checkPageBreak(30);
     
-    // Footer más compacto
-    const footerY = pageHeight - 15;
-    pdf.setFillColor(245, 245, 245);
-    pdf.rect(0, footerY - 5, pageWidth, 10, 'F');
-    pdf.setDrawColor(200, 200, 200);
-    pdf.setLineWidth(0.1);
-    pdf.line(15, footerY - 5, pageWidth - 15, footerY - 5);
+    // Línea superior
+    pdf.setDrawColor(220, 220, 220);
+    pdf.setLineWidth(0.5);
+    pdf.line(15, yPosition, pageWidth - 15, yPosition);
     
-    pdf.setFontSize(7);
-    pdf.setTextColor(120, 120, 120);
-    pdf.setFont(undefined, 'italic');
-    pdf.text('Esta cotización es válida por 30 días desde la fecha de emisión', pageWidth / 2, footerY, { align: 'center' });
+    yPosition += 10;
     
-    // Save PDF
-    pdf.save(`cotizacion-${businessType}-${new Date().toISOString().split('T')[0]}.pdf`);
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(100, 100, 100);
+    pdf.text('Esta propuesta tiene validez de 30 días desde la fecha de emisión.', pageWidth / 2, yPosition, { align: 'center' });
+    
+    const currentDate = new Date().toLocaleDateString('es-PE');
+    pdf.text(`Generado el: ${currentDate}`, pageWidth / 2, yPosition + 8, { align: 'center' });
+
+    // Generar y descargar
+    const fileName = `propuesta-${businessType.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.pdf`;
+    pdf.save(fileName);
   };
 
   const toggleModule = (moduleId: string) => {
@@ -745,8 +788,13 @@ export function InteractiveQuote({ businessType }: InteractiveQuoteProps) {
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
                     {selectedModuleData.map((module) => {
+                      const isMonthlyService = module.id === 'listing-basico' || module.id === 'listing-banner';
                       let adjustedPrice;
-                      if (module.id === 'web-corporativa') {
+                      
+                      if (isMonthlyService) {
+                        // Los servicios mensuales mantienen su precio fijo
+                        adjustedPrice = module.price;
+                      } else if (module.id === 'web-corporativa') {
                         adjustedPrice = businessPricing.basePrice;
                       } else if (module.id === 'landing-page' || module.id === 'tienda-virtual') {
                         // Landing Page y Tienda Virtual tienen precios fijos
@@ -757,8 +805,8 @@ export function InteractiveQuote({ businessType }: InteractiveQuoteProps) {
                       
                       return (
                         <div key={module.id} className="flex justify-between items-center">
-                          <span className="text-sm">{module.name}</span>
-                          <span className="font-semibold">S/{Math.round(adjustedPrice)}</span>
+                          <span className="text-sm">{module.name}{isMonthlyService ? ' (mensual)' : ''}</span>
+                          <span className="font-semibold">S/{Math.round(adjustedPrice)}{isMonthlyService ? '/mes' : ''}</span>
                         </div>
                       );
                     })}
@@ -815,9 +863,10 @@ export function InteractiveQuote({ businessType }: InteractiveQuoteProps) {
                       <tbody>
                         {selectedModuleData.map((module) => {
                           const isMonthlyService = module.id === 'listing-basico' || module.id === 'listing-banner';
+                          // Los servicios mensuales (listing) mantienen su precio fijo, no se multiplican
                           const adjustedPrice = isMonthlyService 
                             ? module.price 
-                            : module.price * businessPricing.multiplier;
+                            : (module.id === 'web-corporativa' ? businessPricing.basePrice : module.price * businessPricing.multiplier);
                           
                           return (
                             <tr key={module.id}>
@@ -993,6 +1042,7 @@ export function InteractiveQuote({ businessType }: InteractiveQuoteProps) {
                     <Button 
                       size="lg"
                       className="bg-green-600 hover:bg-green-700"
+                      onClick={sendWhatsAppQuote}
                     >
                       Solicitar Cotización Formal
                     </Button>

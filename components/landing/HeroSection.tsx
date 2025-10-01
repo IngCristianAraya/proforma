@@ -84,7 +84,7 @@ export function HeroSection({ businessType = 'otros' }: HeroSectionProps) {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm">
               <Star className="w-4 h-4 text-yellow-400" />
-              <span>+1000 negocios confían en nosotros</span>
+              <span>Trabaja con nosotros y tendrás</span>
             </div>
 
             {/* Main Headline */}

@@ -39,10 +39,10 @@ export default function Home() {
       <WebComparison businessType={selectedBusinessType} />
       <PricingPlans businessType={selectedBusinessType} />
       <InteractiveQuote businessType={selectedBusinessType} />
-      <SavingsCalculator businessType={selectedBusinessType} />
-      <RegistrationProcess />
+      {/* <SavingsCalculator businessType={selectedBusinessType} /> */}
+      {/* <RegistrationProcess /> */}
       <FAQ businessType={selectedBusinessType} />
-      <ContactForm />
+      {/* <ContactForm /> */}
       <Footer />
       <Toaster />
     </main>

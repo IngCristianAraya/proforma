@@ -156,8 +156,8 @@ export function ProblemSolution({ businessType = 'general' }: ProblemSolutionPro
             </p>
             <button 
               onClick={() => {
-                const contactSection = document.getElementById('contact');
-                contactSection?.scrollIntoView({ behavior: 'smooth' });
+                const message = encodeURIComponent('Quiero una pagina web');
+                window.open(`https://wa.me/51901426737?text=${message}`, '_blank');
               }}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto"
             >
