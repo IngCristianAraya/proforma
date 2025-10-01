@@ -90,7 +90,7 @@ export function BusinessTypeSelector({ onBusinessTypeSelect, selectedType }: Bus
   const [hoveredType, setHoveredType] = useState<string | null>(null);
 
   return (
-    <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100" data-business-selector>
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">

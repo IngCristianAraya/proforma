@@ -22,8 +22,8 @@ export function SavingsCalculator({ businessType }: SavingsCalculatorProps) {
         return {
           title: "Calculadora de Ahorro - Restaurantes",
           subtitle: "Compara tus costos actuales vs Tubarrio.pe",
-          orderLabel: "Pedidos por mes",
-          valueLabel: "Valor promedio por pedido",
+          orderLabel: "¿Cuántos pedidos recibes al mes?",
+          valueLabel: "¿Cuál es el ticket promedio por pedido?",
           defaultOrders: 150,
           defaultValue: 35,
           commission: 0.18, // 18% comisión promedio delivery apps
@@ -33,8 +33,8 @@ export function SavingsCalculator({ businessType }: SavingsCalculatorProps) {
         return {
           title: "Calculadora de Ahorro - Tiendas",
           subtitle: "Descubre cuánto puedes ahorrar",
-          orderLabel: "Ventas por mes",
-          valueLabel: "Ticket promedio",
+          orderLabel: "¿Cuántas ventas realizas al mes?",
+          valueLabel: "¿Cuál es tu ticket promedio de venta?",
           defaultOrders: 200,
           defaultValue: 20,
           commission: 0.15,
@@ -44,8 +44,8 @@ export function SavingsCalculator({ businessType }: SavingsCalculatorProps) {
         return {
           title: "Calculadora de Ahorro",
           subtitle: "Calcula tu potencial de ahorro",
-          orderLabel: "Servicios por mes",
-          valueLabel: "Valor promedio",
+          orderLabel: "¿Cuántos clientes atiendes al mes?",
+          valueLabel: "¿Cuánto cobras en promedio por servicio?",
           defaultOrders: 100,
           defaultValue: 25,
           commission: 0.12,

@@ -6,6 +6,60 @@ interface WebComparisonProps {
   businessType?: string;
 }
 
+// Función para obtener precios según el tipo de negocio
+const getBusinessPricing = (type: string) => {
+  switch (type?.toLowerCase()) {
+    case 'restaurantes':
+      return {
+        corporativa: 600,
+        description: 'Perfecto para restaurantes',
+        features: 'Menús, reservas, delivery integrado'
+      };
+    case 'tiendas':
+      return {
+        corporativa: 500,
+        description: 'Ideal para tiendas',
+        features: 'Tienda virtual con carrito y pagos'
+      };
+    case 'lavanderias':
+      return {
+        corporativa: 450,
+        description: 'Especializado para lavanderías',
+        features: 'Calculadora y seguimiento'
+      };
+    case 'peluquerias':
+      return {
+        corporativa: 400,
+        description: 'Perfecto para peluquerías',
+        features: 'Citas online y galería'
+      };
+    case 'salud':
+      return {
+        corporativa: 450,
+        description: 'Ideal para centros de salud',
+        features: 'Citas médicas y servicios'
+      };
+    case 'servicios':
+      return {
+        corporativa: 350,
+        description: 'Para servicios técnicos',
+        features: 'Cotizaciones y contacto'
+      };
+    case 'profesionales':
+      return {
+        corporativa: 350,
+        description: 'Para profesionales',
+        features: 'Portafolio y consultas'
+      };
+    default:
+      return {
+        corporativa: 300,
+        description: 'Perfecto para tu negocio',
+        features: 'Sitio profesional básico'
+      };
+  }
+};
+
 // Ejemplos específicos por categoría simplificados
 const categoryExamples = {
   'restaurantes': {
@@ -71,6 +125,9 @@ const categoryExamples = {
 };
 
 export function WebComparison({ selectedCategory = 'Todos', businessType = 'general' }: WebComparisonProps) {
+  // Obtener precios según el tipo de negocio
+  const pricing = getBusinessPricing(businessType);
+  
   // Obtener ejemplos según el tipo de negocio
   const getExamples = () => {
     const key = businessType as keyof typeof categoryExamples;
@@ -115,8 +172,8 @@ export function WebComparison({ selectedCategory = 'Todos', businessType = 'gene
                 Landing Page
               </CardTitle>
               <div className="text-3xl font-bold mt-2">
-                S/165
-                <span className="text-sm font-normal block opacity-90">pago único + S/15/mes</span>
+                S/150
+                <span className="text-sm font-normal block opacity-90">pago único + S/15/mes listing</span>
               </div>
             </CardHeader>
             <CardContent className="p-6">
@@ -173,8 +230,8 @@ export function WebComparison({ selectedCategory = 'Todos', businessType = 'gene
                 Web Corporativa
               </CardTitle>
               <div className="text-3xl font-bold mt-2">
-                S/364
-                <span className="text-sm font-normal block opacity-90">pago único + S/15/mes</span>
+                S/{pricing.corporativa}
+                <span className="text-sm font-normal block opacity-90">pago único + S/15/mes listing</span>
               </div>
             </CardHeader>
             <CardContent className="p-6">

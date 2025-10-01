@@ -260,7 +260,7 @@ export function RegistrationProcess({ businessType }: RegistrationProcessProps) 
                 </button>
                 <div className="flex items-center gap-2 text-sm opacity-90">
                   <CheckCircle className="w-5 h-5" />
-                  <span>Sin compromiso • Gratis por 7 días</span>
+                  <span>Sin compromiso • Listing básico gratis por 7 días</span>
                 </div>
               </div>
             </div>

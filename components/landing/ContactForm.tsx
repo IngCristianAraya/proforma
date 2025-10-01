@@ -234,7 +234,7 @@ export function ContactForm() {
           
           pdf.setFontSize(11);
           pdf.setTextColor(185, 28, 28); // Dark red
-          pdf.text('• PRIMER MES COMPLETAMENTE GRATIS + Setup sin costo', 20, yPos + 3);
+          pdf.text('• LISTING BÁSICO GRATIS EL PRIMER MES (solo contacto)', 20, yPos + 3);
           pdf.text('• Solo pagas a partir del segundo mes', 20, yPos + 10);
           
           // Footer
@@ -466,9 +466,9 @@ ${formData.message || 'Ninguno'}
                       <SelectContent>
                         <SelectItem value="listing-basic">Listing Básico - S/15/mes</SelectItem>
                         <SelectItem value="listing-banner">Listing + Banner - S/25/mes</SelectItem>
-                        <SelectItem value="landing-page">Landing Page - S/150 (pago único)</SelectItem>
-                        <SelectItem value="web-corporativa">Web Corporativa - S/300 (pago único)</SelectItem>
-                        <SelectItem value="tienda-virtual">Tienda Virtual - S/500 (pago único)</SelectItem>
+                        <SelectItem value="landing-page">Landing Page - S/150 (pago único) + S/15/mes listing</SelectItem>
+                <SelectItem value="web-corporativa">Web Corporativa - Desde S/300 (según sector) + S/15/mes listing</SelectItem>
+                <SelectItem value="tienda-virtual">Tienda Virtual Avanzada - desde S/800 (según complejidad)</SelectItem>
                         <SelectItem value="inmuebles">Sección Inmuebles - S/25/mes</SelectItem>
                         <SelectItem value="custom">Necesito una cotización personalizada</SelectItem>
                       </SelectContent>
